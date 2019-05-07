@@ -49,6 +49,12 @@ these rules will limit your creativity and the value derived from this task.
       person's implementation of the task, is forbidden.
   3) tbc.
 
+Timeline:
+7/5: Challenge issued
+14/5: Preliminary assessment of 'core' 3DoF functions
+21/5: Final 3DoF function completion
+28/5: 'Extra' module completed and overall project assessment
+
 
 'Extra' module allocations:
 Hamish: Aerodynamics
