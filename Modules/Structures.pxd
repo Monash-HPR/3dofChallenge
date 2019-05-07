@@ -1,2 +1,2 @@
 cdef class State:
-  cdef int a
+  cdef double a, _a
