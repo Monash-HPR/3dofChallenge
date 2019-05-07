@@ -44,8 +44,10 @@ Rules:
 The rules below will operate on an honour policy. The point of the challenge is
 to generate innovative approaches for dealing with our problems. Not abiding by
 these rules will limit your creativity and the value derived from this task.
-  1) Looking at/copying the existing implementation of Saturn is forbidden.
-  2) tbc.
+  1) Each person's challenge must be on a separate branch of this directory.
+  2) Looking at/copying the existing implementation of Saturn, or any other
+      person's implementation of the task, is forbidden.
+  3) tbc.
 
 
 'Extra' module allocations:
