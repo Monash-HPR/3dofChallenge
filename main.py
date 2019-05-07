@@ -4,5 +4,5 @@ from Structures import *
 
 s = State()
 print(s.a)
-s = integrate_Rk4(s)
+s = integrate_Rk4(s, 0.01)
 print(s.a)
