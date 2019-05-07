@@ -1,0 +1,10 @@
+# Planning for the sim's layout and modules' content
+
+# TODO (7/5/2019):
+-RK4 in Integrator.pyx
+-Newtonian Gravitation in Gravitation.pyx
+-State class in Structures.pyx
+
+# IDEA:
+-Testing code in Structures.pyx (?)
+-Primitive aero model to use to test other things?

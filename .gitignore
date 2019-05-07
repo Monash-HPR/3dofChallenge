@@ -1,2 +1,4 @@
 ## Ignore compiled files
 *.so
+*.c
+*.o
