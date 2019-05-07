@@ -1,5 +1,4 @@
 #3DoF integrator
-cimport Structures
 
 cdef c_integrate_Rk4( state):
   state.a = 2

@@ -2,9 +2,9 @@
 # Maybe include a testing class here?
 
 cdef class State:
-  
+
   def __init__(self):
-   self._a = 0
+    self._a = 0
 
   @property
   def a(self):
