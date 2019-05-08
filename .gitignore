@@ -1,0 +1,8 @@
+# Cython build directory
+build/
+
+# Cython compiled files
+Modules/*.c
+
+# Python Cache
+Modules/__pycache__/
