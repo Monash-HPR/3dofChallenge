@@ -40,6 +40,13 @@ It is in your best interested to Cythonize as much as possible, decompose code
 where possible, and strongly consider the structure of your simulation before
 beginning implementation.
 
+Modelling Simplifications:
+Several simplifications are allowed to reduce the task of modelling sections that are not your 'extra':
+  1) Motor mass change can me modelled as linear (from m(0)=m0 to m(t_burnout)=0).
+  2) Motor thrust can be assumed constant, and equal to the average rated thrust of the motor for the duration of the burn.
+  3) Aerodynamic drag coefficient can be modelled using: c_D(M) = 2400 * (exp(-1.2M) * sin(M) + (M/6) * log_{10}(M+1)).
+    (This is temporary and this model will be updated, watch this space. The new model will be of similar complexity.)
+
 Rules:
 The rules below will operate on an honour policy. The point of the challenge is
 to generate innovative approaches for dealing with our problems. Not abiding by
@@ -66,5 +73,5 @@ Emily: Body Geometry
 Caleb: Dynamics on the launch rail
 
 
-Last updated: 7/5/2019
+Last updated: 8/5/2019
 Updated by: Hamish Self
