@@ -26,7 +26,10 @@ class Motor:
         :returns: The mass in kilograms of the motor at the given time
 
         """
-        return
+        if time > self.burnout_time:
+            return 0
+        
+        return self.initial_mass - (self.initial_mass*time)/self.burnout_time
     
     def get_thrust(self, time):
         """
