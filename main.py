@@ -10,7 +10,11 @@ logger.debug('All Modules Loaded')
 class Simulator:
     def __init__(self):
         logger.debug('Creating Simulator Instance')
-        self.motor = Propulsion.Motor()
+        self.motor = Propulsion.Motor(
+            average_thrust=10.0,
+            initial_mass=2.0,
+            burnout_time=0.3
+        )
         self.drag = Aerodynamics.Drag()
         self.state = State.State()
 
