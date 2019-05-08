@@ -2,4 +2,4 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-logger.debug('Aerodynamics Loaded')
+logger.debug('Aerodynamics Module Loaded')

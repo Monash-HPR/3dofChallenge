@@ -2,4 +2,4 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-logger.debug('Integrator Loaded')
+logger.debug('Integrator Module Loaded')
