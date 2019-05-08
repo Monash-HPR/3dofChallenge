@@ -2,7 +2,8 @@
 build/
 
 # Cython compiled files
-Modules/*.c
+*.c
+*.so
 
 # Python Cache
 Modules/__pycache__/
