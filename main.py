@@ -4,7 +4,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-import Modules.Integrator
+from Modules import Integrator, Aerodynamics, Propulsion, State
 
 if __name__ == "__main__":
     logger.info('Starting 3DOF Simulator')
