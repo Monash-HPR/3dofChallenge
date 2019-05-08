@@ -5,19 +5,20 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 from Modules import Integrator, Aerodynamics, Propulsion, State
+logger.debug('All Modules Loaded')
 
 class Simulator:
     def __init__(self):
         logger.debug('Creating Simulator Instance')
-        return
+        self.motor = Propulsion.Motor()
+        self.drag = Aerodynamics.Drag()
+        self.state = State.State()
 
     def initialise(self):
         logger.info('Initialising Simulator')
-        return
-    
+
     def run(self):
         logger.info('Running Simulator')
-        return
 
 if __name__ == "__main__":
     logger.info('Starting 3DOF Simulator')
