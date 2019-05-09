@@ -1,10 +1,10 @@
 import logging
-cimport numpy as np
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
 class Motor:
-    def __init__(self, average_thrust, initial_mass, burnout_time):
+    def __init__(self, average_thrust, propellant_mass, burnout_time, casing_mass):
         """
         Initialise a new Motor instance
 
@@ -12,8 +12,9 @@ class Motor:
         logger.debug('Creating Motor Instance')
 
         self.average_thrust = average_thrust
-        self.initial_mass = initial_mass
+        self.propellant_mass = propellant_mass
         self.burnout_time = burnout_time
+        self.casing_mass = casing_mass
 
     def get_mass(self, time):
         """
@@ -27,9 +28,9 @@ class Motor:
 
         """
         if time > self.burnout_time:
-            return 0
+            return self.casing_mass
         
-        return self.initial_mass - (self.initial_mass*time)/self.burnout_time
+        return self.casing_mass + self.propellant_mass - (self.propellant_mass*time)/self.burnout_time
     
     def get_thrust(self, time):
         """
