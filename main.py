@@ -1,6 +1,6 @@
 # Main sim loop and associated setup/initialisation
-from Modules import Structures, Transformations, Integrator, Initialisation
-from Modules.Forces import Gravitation, Propulsion, Aerodynamics
+from Modules.Backend import *
+from Modules import Structures
 
 init_settings = {
   'State': {
@@ -21,13 +21,12 @@ init_settings = {
   }
 
 # initialisation
-s = Structures.State()
-
-Initialisation.initialise(init_settings)
-# Propulsion.initialise(init_settings['Propulsion'])
+state = Structures.State()
+initialise(init_settings)
+# print(propulsion.getPropellantMass(0.0))
 
 # print(Propulsion.getPropellantMass(0.0))
 f = lambda x: 0 # RHS function
-print(s.a)
-# s = Integrator.integrate_Rk4(f, s, 0.01)
-print(s.a)
+print(state.a)
+
+print(state.a)
