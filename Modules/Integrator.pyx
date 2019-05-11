@@ -1,8 +1,10 @@
 #3DoF integrator
-from Structures cimport State
+from Structures import State
+from copy import deepcopy
+import numpy as np
+cimport numpy as np
 
-
-cdef State c_integrate_Rk4(state, double dt):
+cdef c_integrate_Rk4(fn, state, double dt):
   """
   Function to compute the 4th order Runge-Kutta method integration step on the
   State class' velocity and position vectors.
@@ -10,6 +12,8 @@ cdef State c_integrate_Rk4(state, double dt):
   coordinate system.
 
   Inputs:
+    -A RHS function fn, which takes the current state and returns the vector
+      f(state) = d/dt([x1, x2, x3, v1, v2, v3])^T = [v1, v2, v3, a1, a2, a3]^T
     -A State class instance, the state of the simulation at time t0.
     -A float dt, the timestep for the integration.
   Outputs:
@@ -17,8 +21,13 @@ cdef State c_integrate_Rk4(state, double dt):
       t0 + dt.
 
 
-  General Scheme (accuracy of O(dt^4)):
+  General Scheme (O(dt^4) accurate):
+  Based on the description given at:
+  https://lpsa.swarthmore.edu/NumInt/NumIntFourth.html
+
   For the ODE dy/dt = f(t, y(t)) with y(t0) = y0
+
+  y = [x1, x2, x3, v1, v2, v3]^T
 
   k1 = f(t0, y0)
   k2 = f(y0 + 1/2 * k1 * dt, t0 + 1/2 * dt)
@@ -26,12 +35,17 @@ cdef State c_integrate_Rk4(state, double dt):
   k4 = f(y0 + k3 * dt, t + dt)
 
   Result
-  y(t0 + dt) = y0 + 1/6 * dt * (k1 + 2*k2 + 2*k3 + k4)
+  y_f = y0 + 1/6 * dt * (k1 + 2*k2 + 2*k3 + k4)
   """
+  cdef double t
 
-  # state.a = 2 * dt
+  # k vectors:
+  cdef np.ndarray[double, ndim = 1] k1, k2, k3, k4  # update vectors
+
+  k1 = fn(state)
+
   return state
 
 
-def integrate_Rk4(State state not None, double dt=0.01):
-  return c_integrate_Rk4(state, dt)
+def integrate_Rk4(RHS_function, state not None, double dt=0.01):
+  return c_integrate_Rk4(RHS_function, state, dt)

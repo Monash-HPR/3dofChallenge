@@ -1,10 +1,12 @@
 # Definitions for 'State' and other classes
 # Maybe include a testing class here?
 
-cdef class State:
+cdef class State(object):
+  cdef:
+    double _a
 
-  def __init__(self):
-    self._a = 0
+  def __cinit__(self):
+    self._a = 1
 
   @property
   def a(self):

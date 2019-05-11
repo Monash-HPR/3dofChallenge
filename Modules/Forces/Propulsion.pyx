@@ -3,6 +3,7 @@ cdef class Motor:
   cdef:
     double thrust_avg, time_burnout
     double mass_propellant_initial, mass_total_initial, mass_casing
+    bint is_initialised
 
   cdef void initialise(self, dict motor_props):
     """
@@ -12,11 +13,13 @@ cdef class Motor:
     Inputs: A dictionary of motor information, motor_props.
     Outputs: none.
     """
-    self.time_burnout = motor_props['time_burnout']
-    self.mass_propellant_initial = motor_props['mass_propellant_initial']
-    self.mass_total_initial = motor_props['mass_total_initial']
+    self.update(motor_props)
+    # self.time_burnout = motor_props['time_burnout']
+    # self.mass_propellant_initial = motor_props['mass_propellant_initial']
+    # self.mass_total_initial = motor_props['mass_total_initial']
     self.mass_casing = self.mass_total_initial - self.mass_propellant_initial
-    self.thrust_avg = motor_props['thrust_avg']
+    # self.thrust_avg = motor_props['thrust_avg']
+    self.is_initialised = 1
 
   cdef double getTotalMass(self, double time):
     """
