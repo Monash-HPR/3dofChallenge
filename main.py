@@ -26,7 +26,7 @@ s = Structures.State()
 Initialisation.initialise(init_settings)
 # Propulsion.initialise(init_settings['Propulsion'])
 
-print(Propulsion.getPropellantMass(0.0))
+# print(Propulsion.getPropellantMass(0.0))
 f = lambda x: 0 # RHS function
 print(s.a)
 # s = Integrator.integrate_Rk4(f, s, 0.01)

@@ -13,12 +13,11 @@ cdef class Motor:
     Inputs: A dictionary of motor information, motor_props.
     Outputs: none.
     """
-    self.update(motor_props)
-    # self.time_burnout = motor_props['time_burnout']
-    # self.mass_propellant_initial = motor_props['mass_propellant_initial']
-    # self.mass_total_initial = motor_props['mass_total_initial']
+    self.time_burnout = motor_props['time_burnout']
+    self.mass_propellant_initial = motor_props['mass_propellant_initial']
+    self.mass_total_initial = motor_props['mass_total_initial']
     self.mass_casing = self.mass_total_initial - self.mass_propellant_initial
-    # self.thrust_avg = motor_props['thrust_avg']
+    self.thrust_avg = motor_props['thrust_avg']
     self.is_initialised = 1
 
   cdef double getTotalMass(self, double time):
