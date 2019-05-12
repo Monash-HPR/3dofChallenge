@@ -8,9 +8,10 @@ from Modules import Integrator, Aerodynamics, Propulsion, State, Atmosphere
 logger.debug('All Modules Loaded')
 
 class Simulator:
-    def __init__(self, diameter):
+    def __init__(self, diameter, step=0.01):
         logger.debug('Creating Simulator Instance')
 
+        self.step = step
         self.diameter = diameter
         self.motor = Propulsion.BasicMotor(
             average_thrust=839.0,
@@ -20,6 +21,7 @@ class Simulator:
         )
         self.drag = Aerodynamics.Drag(diameter=self.diameter)
         self.state = State.State()
+        self.integrator = Integrator.Integrator(step=self.step)
 
     def initialise(self):
         logger.info('Initialising Simulator')
