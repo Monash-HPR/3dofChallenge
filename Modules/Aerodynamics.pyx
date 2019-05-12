@@ -10,16 +10,22 @@ class Drag:
         self.diameter = diameter
         self.ref_area = self.calc_ref_area(self.diameter)
     
-    def get_drag_coefficient(self, M):
-        return 2400 * (np.exp(-1.2*M) * np.sin(M) + (M/6) * np.log10(M+1))
+    def get_drag_coefficient(self, vel):
+        """
+        Get the drag coefficient of the rocket based on the simplified drag model
+
+        :param vel: The velocity of the rocket in mach
+
+        """
+        return 2400.0 * (np.exp(-1.2*vel) * np.sin(vel) + (vel/6.0) * np.log10(vel+1.0))
     
     def get_drag_force(self, state):
-        mach = Atmosphere.ms_to_mach(state.vel)
+        mach = Atmosphere.ms_to_mach(state.vel, state.alt)
         c_d = self.get_drag_coefficient(mach)
         density = Atmosphere.get_density(state.alt)
-        return 0.5 * c_d * density * self.ref_area * np.power(state.vel, 2)
+        return 0.5 * c_d * density * self.ref_area * np.power(state.vel, 2.0)
     
     def calc_ref_area(self, diameter):
-        return np.pi * np.power(diameter/2, 2)
+        return np.pi * np.power(diameter/2.0, 2.0)
 
 logger.debug('Aerodynamics Module Loaded')

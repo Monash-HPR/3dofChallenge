@@ -17,7 +17,7 @@ cpdef double ms_to_mach(double vel, double alt):
 
 cpdef double get_density(double alt):
     cdef double temp = get_atmospheric_temp(alt)
-    return 101.29 * [(temp)/288.08]^5.256 
+    return 101.29 * np.power((temp)/288.08, 5.256)
 
 cpdef double get_speed_of_sound(double alt):
     cdef double temp = get_atmospheric_temp(alt)
