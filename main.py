@@ -12,11 +12,11 @@ class Simulator:
         logger.debug('Creating Simulator Instance')
 
         self.diameter = diameter
-        self.motor = Propulsion.Motor(
-            average_thrust=10.0,
-            propellant_mass=2.0,
-            burnout_time=0.3,
-            casing_mass=1.0
+        self.motor = Propulsion.BasicMotor(
+            average_thrust=839.0,
+            propellant_mass=4.436,
+            burnout_time=8.96,
+            casing_mass=2.518
         )
         self.drag = Aerodynamics.Drag(diameter=self.diameter)
         self.state = State.State()
