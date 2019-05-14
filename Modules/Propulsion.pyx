@@ -97,6 +97,6 @@ class BasicMotor(Motor):
         :param time: The time in seconds
         :returns: The motor thrust in Newtons at the given time
         """
-        return self.average_thrust if time < self.burnout_time else 0
+        return np.array([0.0, self.average_thrust, 0.0], np.float64) if time < self.burnout_time else np.array([0.0, 0.0, 0.0], np.float64)
 
 logger.debug('Propulsion Module Loaded')
