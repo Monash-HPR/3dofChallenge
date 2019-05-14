@@ -29,7 +29,7 @@ cpdef np.ndarray T_EG(double lat, double lon):
     return T_GE(lat, lon).T
 
 # Transformation matrix of body w.r.t geocentric
-cpdef np.ndarray T_BE(double yaw, double pitch, double roll):
+cpdef np.ndarray T_BG(double yaw, double pitch, double roll):
     return np.array([
         [
             np.cos(yaw) * np.cos(pitch),
@@ -50,6 +50,6 @@ cpdef np.ndarray T_BE(double yaw, double pitch, double roll):
 
 
 # Transformation matrix of geocentric w.r.t. body
-cpdef np.ndarray T_EB(double yaw, double pitch, double roll):
+cpdef np.ndarray T_GB(double yaw, double pitch, double roll):
     return T_BE(yaw, pitch, roll).T
     
