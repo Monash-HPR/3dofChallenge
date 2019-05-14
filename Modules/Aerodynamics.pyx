@@ -19,12 +19,12 @@ class Drag:
         """
         return 2400.0 * (np.exp(-1.2*vel) * np.sin(vel) + (vel/6.0) * np.log10(vel+1.0))
     
-    def get_drag_force(self, state):
-        mach = Atmosphere.ms_to_mach(state.vel, state.alt)
+    def get_force(self, vel, alt):
+        mach = Atmosphere.ms_to_mach(vel, alt)
         c_d = self.get_drag_coefficient(mach)
-        density = Atmosphere.get_density(state.alt)
-        return 0.5 * c_d * density * self.ref_area * np.power(state.vel, 2.0)
-    
+        density = Atmosphere.get_density(alt)
+        return 0.5 * c_d * density * self.ref_area * np.power(vel, 2.0)
+
     def calc_ref_area(self, diameter):
         return np.pi * np.power(diameter/2.0, 2.0)
 
