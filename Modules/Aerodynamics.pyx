@@ -17,13 +17,13 @@ class Drag:
         :param vel: The velocity of the rocket in mach
 
         """
-        return 2400.0 * (np.exp(-1.2*vel) * np.sin(vel) + (vel/6.0) * np.log10(vel+1.0))
+        return np.array([0.0, 2400.0 * (np.exp(-1.2*vel[1]) * np.sin(vel[1]) + (vel[1]/6.0) * np.log10(vel[1]+1.0)), 0.0], np.float64)
     
-    def get_force(self, vel, alt):
-        mach = Atmosphere.ms_to_mach(vel, alt)
+    def get_force(self, vel, pos):
+        mach = Atmosphere.ms_to_mach(vel, pos[1])
         c_d = self.get_drag_coefficient(mach)
-        density = Atmosphere.get_density(alt)
-        return 0.5 * c_d * density * self.ref_area * np.power(vel, 2.0)
+        density = Atmosphere.get_density(pos[1])
+        return 0.5 * density * self.ref_area * np.multiply(c_d, np.power(vel, 2.0))
 
     def calc_ref_area(self, diameter):
         return np.pi * np.power(diameter/2.0, 2.0)

@@ -1,4 +1,5 @@
 import logging
+cimport numpy as np
 import numpy as np
 
 cdef double GAS_CONSTANT = 286.0
@@ -9,11 +10,11 @@ cdef double ATMOSPHERIC_TEMP_OFFSET = 15.04
 
 logger = logging.getLogger(__name__)
 
-cpdef double mach_to_ms(double vel, double alt):
-    return vel*get_speed_of_sound(alt)
+cpdef np.ndarray mach_to_ms(np.ndarray vel, double alt):
+    return np.multiply(vel, get_speed_of_sound(alt))
 
-cpdef double ms_to_mach(double vel, double alt):
-    return vel/get_speed_of_sound(alt)
+cpdef np.ndarray ms_to_mach(np.ndarray vel, double alt):
+    return np.divide(vel, get_speed_of_sound(alt))
 
 cpdef double get_density(double alt):
     cdef double temp = get_atmospheric_temp(alt)
