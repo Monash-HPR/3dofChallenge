@@ -25,6 +25,7 @@ class Motor:
         This method is not explicitly declared here, and should be declared in the subclass.
         """
         logger.error('Mass method not implemented. Ensure a subclass is being used and the Motor class is not being instantiated directly.')
+        raise NotImplementedError
     
     def get_thrust(self, time):
         """
@@ -33,6 +34,7 @@ class Motor:
         This method is not explicitly declared here, and should be declared in the subclass.
         """
         logger.error('Thrust method not implemented. Ensure a subclass is being used and the Motor class is not being instantiated directly.')
+        raise NotImplementedError
 
 class BasicMotor(Motor):
     """
