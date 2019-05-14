@@ -7,8 +7,8 @@ logger = logging.getLogger(__name__)
 class State:
     def __init__(self, **kwargs):
         logger.debug('Creating State Instance')
-        self.time = kwargs.get('time', np.array([0.0, 0.0, 0.0], np.float64))
-        self.alt = kwargs.get('alt', np.array([0.0, 0.0, 0.0], np.float64))
+        self.time = kwargs.get('time', 0.0)
+        self.pos = kwargs.get('pos', np.array([0.0, 0.0, 0.0], np.float64))
         self.vel = kwargs.get('vel', np.array([0.0, 0.0, 0.0], np.float64))
         self.acc = kwargs.get('acc', np.array([0.0, 0.0, 0.0], np.float64))
         self.mass = kwargs.get('mass', np.array([0.0, 0.0, 0.0], np.float64))

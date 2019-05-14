@@ -43,24 +43,24 @@ class Simulator:
             self.integrator.RK4(_state, self.get_accel)
             _state.update(
                 mass=self.motor.get_mass(_state.time),
-                drag=self.drag.get_force(_state.vel, _state.alt),
-                gravity=self.gravity.get_force(_state.alt, self.mass + self.motor.get_mass(_state.time))
+                drag=self.drag.get_force(_state.vel, _state.pos),
+                gravity=self.gravity.get_force(_state.pos[1], self.mass + self.motor.get_mass(_state.time))
             )
             self.state.update_from(_state)
             self.iters += 1
             states.append(_state)
-            if self.iters > self.max_iters or self.state.alt <= 0:
+            if self.iters > self.max_iters or self.state.pos[1] <= 0:
                 self.reached_apogee = True
 
-        output = np.array([[s.time, s.alt] for s in states])
+        output = np.array([[s.time, s.pos[1]] for s in states])
         plt.plot(output.T[0], output.T[1])
         plt.show()
         logger.info('Finished Simulator')
 
-    def get_accel(self, time, vel, alt):
+    def get_accel(self, time, vel, pos):
         mass = self.mass + self.motor.get_mass(time)
-        net_force = self.motor.get_thrust(time) - np.multiply(np.sign(vel), np.abs(self.drag.get_force(vel, alt))) - self.gravity.get_force(alt, mass)
-        #print(net_force, self.motor.get_thrust(time), np.abs(self.drag.get_force(vel, alt)), self.gravity.get_force(alt, mass), vel, alt)
+        net_force = self.motor.get_thrust(time) + np.multiply(-np.sign(vel), np.abs(self.drag.get_force(vel, pos))) + self.gravity.get_force(pos[1], mass)
+        #print(net_force, self.motor.get_thrust(time), np.abs(self.drag.get_force(vel, pos)), self.gravity.get_force(pos, mass), vel, pos)
         return net_force/mass
 
 if __name__ == "__main__":

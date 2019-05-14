@@ -34,24 +34,25 @@ class Integrator:
         c = np.array([0.0, 0.0, 0.5, 0.5, 1.0], dtype=np.float64)
 
          # Number of estimates + 1 (0-indexed arrays)
-        k_vel = np.zeros(length + 1) # vels
-        k_acc = np.zeros(length + 1) # acc
+        k_vel = np.zeros((length + 1, 3)) # vels
+        k_acc = np.zeros((length + 1, 3)) # acc
 
         # Calculate the estimates
         for i in range(1,length+1):
             _time = state.time + c[i]*self.h
-            _alt = state.alt + self.h*np.sum(np.multiply(a[i], k_vel))
-            k_vel[i] = state.vel + self.h*np.sum(np.multiply(a[i], k_acc))
-            k_acc[i] = accel_func(_time, k_vel[i], _alt)
+            _pos = state.pos + self.h*np.sum(np.multiply(k_vel.T, a[i]).T)
+            k_vel[i] = state.vel + self.h*np.sum(np.multiply(k_acc.T, a[i]).T)
+            k_acc[i] = accel_func(_time, k_vel[i], _pos)
 
         # Reduce the estimates to a single set of values
         t_final = state.time + self.h
-        alt_final = state.alt + self.h*np.sum(np.multiply(b, k_vel))
-        vel_final = state.vel + self.h*np.sum(np.multiply(b, k_acc))
-        acc_final = (vel_final - state.vel)/self.h
+        pos_final = state.pos + self.h*np.sum(np.multiply(k_vel.T, b).T)
+        delta_v = self.h*np.sum(np.multiply(k_acc.T, b).T)
+        vel_final = state.vel + delta_v
+        acc_final = np.divide(delta_v, self.h)
         return state.update(
             time=t_final,
-            alt=alt_final,
+            pos=pos_final,
             vel=vel_final,
             acc=acc_final
         )
