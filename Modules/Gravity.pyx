@@ -13,4 +13,4 @@ cdef class Gravity:
         return
     
     cpdef get_force(self, double alt, double mass):
-        return G*MASS_EARTH*mass/np.power(RADIUS_EARTH+alt, 2)
+        return np.array([0.0, -G*MASS_EARTH*mass/np.power(RADIUS_EARTH+alt, 2), 0.0], np.float64)
