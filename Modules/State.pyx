@@ -1,18 +1,19 @@
 import json
 import logging
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
 class State:
     def __init__(self, **kwargs):
         logger.debug('Creating State Instance')
-        self.time = kwargs.get('time', 0.0)
-        self.alt = kwargs.get('alt', 0.0)
-        self.vel = kwargs.get('vel', 0.0)
-        self.acc = kwargs.get('acc', 0.0)
-        self.mass = kwargs.get('mass', 0.0)
-        self.drag = kwargs.get('drag', 0.0)
-        self.gravity = kwargs.get('gravity', 0.0)
+        self.time = kwargs.get('time', np.array([0.0, 0.0, 0.0], np.float64))
+        self.alt = kwargs.get('alt', np.array([0.0, 0.0, 0.0], np.float64))
+        self.vel = kwargs.get('vel', np.array([0.0, 0.0, 0.0], np.float64))
+        self.acc = kwargs.get('acc', np.array([0.0, 0.0, 0.0], np.float64))
+        self.mass = kwargs.get('mass', np.array([0.0, 0.0, 0.0], np.float64))
+        self.drag = kwargs.get('drag', np.array([0.0, 0.0, 0.0], np.float64))
+        self.gravity = kwargs.get('gravity', np.array([0.0, 0.0, 0.0], np.float64))
     
     def update(self, **kwargs):
         self.__dict__.update(kwargs)
