@@ -3,9 +3,10 @@ import numpy as np
 
 class Rocket:
     def __init__(self,inital_altitude=0):
-        self.mass = 35 #subject to change
+        self.mass0 = 35 #subject to change
+        self.mass = 35
         self.motorCaseMass = 1 #subject to change
-        self.massFuel = 2
+        self.massFuel = 9
         self.pressure0 = 101325
         self.temperature0 = 288.15
         self.g0 = 9.81
@@ -13,7 +14,7 @@ class Rocket:
         self.L = -0.0065
         self.GM = 3.986 * 10**14
         self.Re = 6378137
-        self.Sei = [[self.Re], [0], [0]]
+        self.Sei = np.array([[0], [0], [0]])
         self.rocket_area = math.pi * (0.127/2)**2 #subject to change
         self.time = [0] #will be turned into a list
         self.timestep = 0.01 #subject to change
@@ -23,28 +24,29 @@ class Rocket:
         self.lat = 0
         self.long = 0
         self.w_ei = 2*np.pi/(24*60*60)
-        self.w_ei_e = [[0, self.w_ei, 0], [self.w_ei, 0, 0], [0, 0, 0]]
+        self.w_ei_e = np.array([[0, self.w_ei, 0], [self.w_ei, 0, 0], [0, 0, 0]])
         self.T_vg = []
 
         self.dragB = 0
         self.density = 0
         self.pressure = 101325
         self.temperature = 288.15
-        self.velocityB = [[0], [0], [0]]
-        self.velocityG = [[0],[0],[0]]
-        self.Sbe = [[inital_altitude], [0], [0]]
+        self.velocityB = np.array([[0], [0], [0]])
+        self.velocityG = np.array([[0],[0],[0]])
+        self.Sbe = np.array([[inital_altitude+self.Re], [0], [0]])
         self.Sbi = np.add(self.Sbe, self.Sei)
         self.cd = 0
         self.mach = 0
         self.thrust = 0
-        self.y = np.pi/3
+        self.y = np.pi/2
         self.x = 0
         self.Acc_mat = []
 
     def get_altitude(self):
         #self.Sbe = np.add(self.Sbi, np.dot(-1, self.Sei))
-
-        return self.Sbe[0][0]
+        alt = np.linalg.norm(self.Sbe)
+        print(alt)
+        return alt
 
     def get_drag(self):
         self.dragB = 0.5*self.get_density()*(self.velocityB[-1][0]**2)*self.rocket_area*self.get_cd()
@@ -63,8 +65,13 @@ class Rocket:
         return self.density
 
     def get_cd(self):
-        m = self.get_mach()
-        self.cd = 2400 * (math.exp(-1.2*m) * math.sin(m) + (m / 6) * math.log(m + 1, 10))
+        M = self.get_mach()
+        #self.cd = 2400 * (math.exp(-1.2*m) * math.sin(m) + (m / 6) * math.log(m + 1, 10))
+        if M == 0:
+            self.cd = 0
+        else:
+            Cd1 = (0.5*math.exp(-2*M)*math.cos(5.5*M)) + 0.1*M*math.log(M) + 0.5
+            self.cd = (math.exp(-0.5*M)*Cd1) + 0.1*math.exp(M-5)
         return self.cd
 
     def get_mach(self):
@@ -82,11 +89,16 @@ class Rocket:
         r = self.Re + self.get_altitude()
         grav = self.GM/r
         grav = grav/r
-        self.g = [[0], [0], [grav]]
+        self.g = np.array([[0], [0], [grav]])
         return self.g
 
     def get_mass(self): #not finishind this function at all just ill do it later
-        return self.mass
+        if self.time[-1] > self.burntime:
+            return self.mass
+        else:
+            m_dot = self.massFuel/self.burntime
+            self.mass = self.mass0 - self.time[-1]*m_dot
+            return self.mass
 
 #backed ^^
 
@@ -110,19 +122,19 @@ class Rocket:
 
 
         sx = np.sin(self.x)
-        if sx < 10**-10:
+        if sx < 1e-10:
             sx = 0
         cx = np.cos(self.x)
-        if cx < 10**-10:
+        if cx < 1e-10:
             cx = 0
         sy = np.sin(self.y)
-        if sy < 10**-10:
+        if sy < 1e-10:
             sy = 0
         cy = np.cos(self.y)
-        if cy < 10**-10:
+        if cy < 1e-10:
             cy = 0
 
-        self.T_vg = [[cy*cx, cy*sx, -1*sy],[-sx, cx, 0],[sy*cx, sy*sx, cy]]
+        self.T_vg = np.array([[cy*cx, cy*sx, -1*sy],[-sx, cx, 0],[sy*cx, sy*sx, cy]])
         return self.T_vg
 
 
@@ -132,7 +144,7 @@ class Rocket:
         slat = math.sin(self.lat)
         clat = math.cos(self.lat)
 
-        T_ge =  [[-slat*clong, -slat*slong, clong],[-slong, clong, 0],[-clat*clong, -clat*slong, -slat]]
+        T_ge =  np.array([[-slat*clong, -slat*slong, clong],[-slong, clong, 0],[-clat*clong, -clat*slong, -slat]])
         return T_ge
 
     def get_T_ve(self):
@@ -147,7 +159,7 @@ class Rocket:
         return self.netF_aero_propB
 
     def integrator_step(self):
-        netF_aero_propV = [[self.get_netF_aero_prop()], [0], [0]]
+        netF_aero_propV = np.array([[self.get_netF_aero_prop()], [0], [0]])
         f_on_m = np.dot(netF_aero_propV, 1/self.get_mass())
         g_v = np.matmul(self.get_T_vg(), self.get_gravity())
         mat_one = np.add(f_on_m,g_v)
@@ -157,7 +169,7 @@ class Rocket:
         mat_two = np.matmul(mat_two, np.transpose(T_ve))
         mat_two = np.matmul(mat_two, self.velocityB)
         mat_two = np.dot(-2, mat_two)
-        print(mat_two)
+
 
         mat_three = np.matmul(self.get_T_ve(), self.w_ei_e)
         mat_three = np.matmul(mat_three, self.w_ei_e)
@@ -169,8 +181,8 @@ class Rocket:
         self.Acc_mat = np.add(dvdt, mat_three)
 
         v_dot = self.Acc_mat[0][0]
-        print('.',v_dot)
-        v_new = [[self.velocityB[0][0] + v_dot*self.timestep], [0], [0]]
+        #print('.',v_dot)
+        v_new = np.array([[self.velocityB[0][0] + v_dot*self.timestep], [0], [0]])
         v_old = self.velocityB
         self.velocityB = v_new
 
@@ -196,11 +208,14 @@ class Rocket:
     def integrator(self):
         v = self.integrator_step()
         alt = self.get_altitude()
-        for i in range(1):
+        while(v>0):
             v = self.integrator_step()
-            print(self.Sbi,self.y)
+            #print(self.Sbi,self.y)
         return self.get_altitude()
+
+
+
 
 rock = Rocket(0)
 print(rock.integrator())
-print(max(rock.time))
+print(rock.get_altitude())
