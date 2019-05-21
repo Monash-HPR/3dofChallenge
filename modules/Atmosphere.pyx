@@ -74,3 +74,11 @@ cdef double c_density(double altitude):
   altitude = geopotential(altitude)
   cdef double rho = pressure(altitude)/(R*temp(altitude))
   return rho
+
+def speedsound(double altitude):
+  return c_speedsound(altitude)
+
+cdef double c_speedsound(double altitude):
+  T = temp(altitude)
+  cdef double a = cmath.sqrt(gamma*R*T)
+  return a
