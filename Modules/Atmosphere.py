@@ -26,17 +26,20 @@ def getDensity(State):
     return p/(R*T)
 
 def getSonicSpeed(State):
+    # Returns the speed of sound of the sorrounding air for a given altitude
     gamma = 1.4             # Ratio of specific heats for air
     R = 287.058             #Specific Gas constant of dry acquire
     T = getTemperature(State)
     return np.sqrt(gamma * R * T)
 
 def getDynamicPressure(State):
+    # Returns the dynamic pressure experienced for a given velocity and position
     V = np.linalg.norm(State.vB_I_I)
     density = getDensity(State)
     return 0.5 * density * V**2
 
 def getMach(State):
+    # Returns the Mach Number for a given velocity and altitude
     V = np.linalg.norm(State.vB_I_I)
     a = getSonicSpeed(State)
     return V/a
