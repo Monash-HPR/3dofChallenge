@@ -32,9 +32,9 @@ def initial_T_DG(sBI__G): #unsure if this is needed
     geodetic_lon = arcsin(state.sBI_I_I[2]/np.sqrt(state.sBI_I_I[1]**2 + state.sBI_I_I[1]**2)) - lGO - omega_earth(State.time)
     return
 
-def get_T_DI(State):
+def get_T_DI(sBI__I):
     # Create the transformation matrix from geodetic coordinates to inertial coordinates
-    geodetic_postion = Geodesy.getGeodeticPosition(State.sBI__I)
+    geodetic_postion = Geodesy.getGeodeticPosition(sBI__I)
     lat = geodetic_postion[0]           # Geodetic latitude
     lon = geodetic_position[1]          # Celestial longitude
 
