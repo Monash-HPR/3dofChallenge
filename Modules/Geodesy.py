@@ -20,19 +20,18 @@ def getGeocentricLatitude(sBI__I):
     sBI_norm = np.linalg.norm(sBI__I)
     return np.arcsin(sBI__I[2]/sBI_norm)
 
-def getApproximateDeflectionAngle(altitude):
+def getApproximateDeflectionAngle(geodetic_lat, h):
     # Calculates the angle between the geocentric latitude and the geodetic latitude
-    geodetic_lat = getGeodeticLatitude(State)
-    R0 = getR0()
-    return f * np.sin(2 * geodetic_lat) * (1 - f/2 - altitude/R0)
+    R0 = getR0(geodetic_lat)
+    return f * np.sin(2 * geodetic_lat) * (1 - f/2 - h/R0)
 
-def getDeflectionAngle(sBI__I):
-    geodetic_pos = getGeodeticPosition(sBI__I)
+def getDeflectionAngle(sBI__I, time):
+    geodetic_pos = getGeodeticPosition(sBI__I, time)
     geodetic_lat = geodetic_pos[0]
     geocentric_lat = getGeocentricLatitude(sBI__I)
     return geodetic_lat - geocentric_lat
 
-def getGeodeticPosition(sBI__I):
+def getGeodeticPosition(sBI__I, time):
     # Retrives the geodetic position from the state vector.
     # As the geodetic latitude and longitude are unkown. this must be acquire through an iterative process
 
@@ -46,14 +45,16 @@ def getGeodeticPosition(sBI__I):
     # Perform iterations to calculate geodetic latitude
     while (np.abs(geodetic_lat_last - geodetic_lat) > 1e-6) and (iter < 15):
         geodetic_lat_last = geodetic_lat
-        r = getR0(geodetic_lat)
+        R0 = getR0(geodetic_lat)
         h = sBI_norm - R0
-        delta = getApproximateDeflectionAngle(h)
+        delta = getApproximateDeflectionAngle(geodetic_lat, h)
         geodetic_lat = delta + geocentric_lat
         iter += 1
 
+    print(np.transpose(sBI__I)[2])
     # Now calculate celestial longitude as a correction is required due to the rotation of the Earth
-    geodetic_lon = arcsin(state.sBI_I_I[2]/np.sqrt(state.sBI_I_I[1]**2 + state.sBI_I_I[1]**2)) - lGO - omega_earth(State.time)
+    # NOTE: There should be an initial greenwich meridian longitude term that idk how to deal with rn.
+    geodetic_lon = np.arcsin(sBI__I[1]/np.sqrt(sBI__I[0]**2 + sBI__I[1]**2)) - omega_earth*time
 
     return np.array([[geodetic_lat], [geodetic_lon], [sBI_norm]])
 

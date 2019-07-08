@@ -10,9 +10,10 @@ initial_conditions = {
     "mass_propellant": 9,   # Mass of propellant
     "latitude": -37.8136,   # Range latitude    (degrees)
     "longitude": 144.9631,  # Range longitude   (degrees)
-    "altitude": 100,        # Range altitude    (m)
+    "altitude": 0,        # Range altitude    (m)
     "burn_time": 3.5,       # motor burn Time   (s)
     "thrust": 5800          # motor burn Time   (N)
+    }
 
 
 

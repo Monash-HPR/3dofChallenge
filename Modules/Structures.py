@@ -18,12 +18,15 @@ class State:
         self.thrust = initial_conditions["thrust"]
 
         #set inital position
-        self.sB_I_I = np.array([0.0, 0.0, -r_Earth - initial_conditions["altitude"]])
-        sBI__G = np.array([[0.0], [0.0], [r_Earth + initial_conditions["altitude"]]])
-        print(sBI__G)
-        T_DG = initial_T_DG(sBI__G) # Fix this shit
+        self.sBI__I = np.array([0.0, 0.0, r_Earth + initial_conditions["altitude"]])
+        sBI__G = np.array([[0.0], [0.0], [-r_Earth - initial_conditions["altitude"]]])
+        T_DI = Transformations.get_T_DI(self.sBI__I, self.time)
+        T_DG = Transformations.get_T_DG(self.sBI__I, self.time)
+        print(T_DI)
+        print(T_DG)
         self.sBI__I = np.matmul(np.matmul(np.transpose(T_DI),T_DG),sBI__G)
 
+        # Set initial velocity
         self.vB_I_I = np.array([0.0, 0.0, 0.0])
         self.aB_I_I = np.array([0.0, 0.0, 0.0])
 
