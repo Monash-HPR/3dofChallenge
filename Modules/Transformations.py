@@ -31,3 +31,13 @@ def initial_T_DG(sBI__G): #unsure if this is needed
     # Now calculate geodetic longitude as a correction is required due to the rotation of the Earth
     geodetic_lon = arcsin(state.sBI_I_I[2]/np.sqrt(state.sBI_I_I[1]**2 + state.sBI_I_I[1]**2)) - lGO - omega_earth(State.time)
     return
+
+def get_T_DI(State):
+    # Create the transformation matrix from geodetic coordinates to inertial coordinates
+    geodetic_postion = Geodesy.getGeodeticPosition(State.sBI__I)
+    lat = geodetic_postion[0]           # Geodetic latitude
+    lon = geodetic_position[1]          # Celestial longitude
+
+    return np.array([   [-np.sin(lat) * cos(lon), -np.sin(lat) * sin(lon), np.cos(lon)],
+                        [-np.sin(lon), np.cos(lon), 0.0],
+                        [-np.cos(lat) * np.cos(lon), -np.cos(lon) * np.sin(lon), -np.sin(lat)]])
