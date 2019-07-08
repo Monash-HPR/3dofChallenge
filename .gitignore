@@ -8,3 +8,6 @@ build/
 # Python Cache
 Modules/__pycache__/
 *.pyc
+
+venv/
+.vscode/
