@@ -15,8 +15,8 @@ class Integrator:
 
         :param state: The current state to use
         :type state: Modules.State.State
-        :param accel_func:
-        :type accel_func: Callable with 2 arguments (time, alt)
+        :param accel_func: Function to return the acceleration of the body w.r.t. the inertial frame
+        :type accel_func: Callable with 3 arguments (time, vel, alt)
 
         """
         # Number of estimates the method uses
@@ -46,8 +46,9 @@ class Integrator:
 
         # Reduce the estimates to a single set of values
         t_final = state.time + self.h
-        pos_final = state.pos + self.h*np.sum(np.multiply(k_vel.T, b).T)
-        delta_v = self.h*np.sum(np.multiply(k_acc.T, b).T)
+        delta_pos = self.h*np.sum(np.multiply(k_vel.T, b).T, 0)
+        pos_final = state.pos + delta_pos
+        delta_v = self.h*np.sum(np.multiply(k_acc.T, b).T, 0)
         vel_final = state.vel + delta_v
         acc_final = np.divide(delta_v, self.h)
         return state.update(
