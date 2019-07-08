@@ -20,11 +20,17 @@ def getGeocentricLatitude(State):
     sBI_norm = np.linalg.norm(State.sBI__I)
     return np.arcsin(State.sBI__I[2]/sBI_norm)
 
-def getDeflectionAngle(altitude):
+def getApproximateDeflectionAngle(altitude):
     # Calculates the angle between the geocentric latitude and the geodetic latitude
     geodetic_lat = getGeodeticLatitude(State)
     R0 = getR0()
     return f * np.sin(2 * geodetic_lat) * (1 - f/2 - altitude/R0)
+
+def getDeflectionAngle(State):
+    geodetic_pos = getGeodeticPosition(State)
+    geodetic_lat = geodetic_pos[0]
+    geocentric_lat = def getGeocentricLatitude(State)
+    return geodetic_lat - geocentric_lat
 
 def getGeodeticPosition(State):
     # Retrives the geodetic position from the state vector.
@@ -42,7 +48,7 @@ def getGeodeticPosition(State):
         geodetic_lat_last = geodetic_lat
         r = getR0(geodetic_lat)
         h = sBI_norm - R0
-        delta = getDeflectionAngle(h)
+        delta = getApproximateDeflectionAngle(h)
         geodetic_lat = delta + geocentric_lat
         iter += 1
 
