@@ -29,7 +29,7 @@ def getApproximateDeflectionAngle(altitude):
 def getDeflectionAngle(State):
     geodetic_pos = getGeodeticPosition(State)
     geodetic_lat = geodetic_pos[0]
-    geocentric_lat = def getGeocentricLatitude(State)
+    geocentric_lat = getGeocentricLatitude(State)
     return geodetic_lat - geocentric_lat
 
 def getGeodeticPosition(State):
