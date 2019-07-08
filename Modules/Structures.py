@@ -1,4 +1,5 @@
 import numpy as np
+from Modules import Transformations
 
 # constants
 DEG_TO_RAD = np.pi / 180;       # Degrees to radians conversion factor
@@ -14,13 +15,17 @@ class State:
         self.apogee = "false"
 
         #set inital position
-        sBI__G = np.array([[DEG_TO_RAD * initial_conditions["latitude"]], [DEG_TO_RAD * initial_conditions["longitude"]], [r_Earth + initial_conditions["altitude"]]])
+        sBI__G = np.array([[0.0], [0.0], [r_Earth + initial_conditions["altitude"]]])
         print(sBI__G)
-        self.sBI__I = np.array([[0.0], [0.0], [0.0]])
-
+        T_DG = initial_T_DG(sBI__G) # Fix this shit
+        self.sBI__I = np.matmul(np.matmul(np.transpose(T_DI),T_DG),sBI__G)
 
         self.vB_I_I = np.array([0.0, 0.0, 0.0])
         self.aB_I_I = np.array([0.0, 0.0, 0.0])
 
 def initialiseState(initial_conditions):
     return State(initial_conditions)
+
+def initial_T_DG(sBI__G):
+
+    return

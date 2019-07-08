@@ -35,7 +35,7 @@ def getDeflectionAngle(State):
 def getGeodeticPosition(State):
     # Retrives the geodetic position from the state vector.
     # As the geodetic latitude and longitude are unkown. this must be acquire through an iterative process
-
+    
     # Set geodetic latitude to gecentric latitude to begin routine
     geocentric_lat = getGeocentricLatitude(State)
     geodetic_lat = geocentric_lat
