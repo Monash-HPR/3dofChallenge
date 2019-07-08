@@ -9,16 +9,16 @@ omega_earth = 7292115e-11     # Angular velocity of the Earth
 C20 = -4.841688e-4            # Second-degree zonal gravitational coefficent
 
 
-def get_g__G(State):
+def get_g__G(sBI__I):
     # Calculates the gravitational vector in geographic coordinates using a spheroidal, rotating Earth model of the state vector
-    sBI_norm = np.linalg.norm(State.sBI__I)
+    sBI_norm = np.linalg.norm(sBI__I)
     geocentric_lat = getGeocentricLatitude(State)
     return GM / sBI_norm**2 * np.array([   [-3 * np.sqrt(5) * C20 * (a / sBI_norm)**2 * np.sin(geocentric_lat) * np.cos(geocentric_lat)], [0.0], [1 + 1.5 * C20 * (a / sBI_norm)**2 * (3 * np.sin(geocentric_lat) - 1)]])
 
-def getGeocentricLatitude(State):
+def getGeocentricLatitude(sBI__I):
     # Retrieves the geocentric latitude of the state vector
-    sBI_norm = np.linalg.norm(State.sBI__I)
-    return np.arcsin(State.sBI__I[2]/sBI_norm)
+    sBI_norm = np.linalg.norm(sBI__I)
+    return np.arcsin(sBI__I[2]/sBI_norm)
 
 def getApproximateDeflectionAngle(altitude):
     # Calculates the angle between the geocentric latitude and the geodetic latitude
@@ -26,21 +26,21 @@ def getApproximateDeflectionAngle(altitude):
     R0 = getR0()
     return f * np.sin(2 * geodetic_lat) * (1 - f/2 - altitude/R0)
 
-def getDeflectionAngle(State):
-    geodetic_pos = getGeodeticPosition(State)
+def getDeflectionAngle(sBI__I):
+    geodetic_pos = getGeodeticPosition(sBI__I)
     geodetic_lat = geodetic_pos[0]
-    geocentric_lat = getGeocentricLatitude(State)
+    geocentric_lat = getGeocentricLatitude(sBI__I)
     return geodetic_lat - geocentric_lat
 
-def getGeodeticPosition(State):
+def getGeodeticPosition(sBI__I):
     # Retrives the geodetic position from the state vector.
     # As the geodetic latitude and longitude are unkown. this must be acquire through an iterative process
-    
+
     # Set geodetic latitude to gecentric latitude to begin routine
-    geocentric_lat = getGeocentricLatitude(State)
+    geocentric_lat = getGeocentricLatitude(sBI__I)
     geodetic_lat = geocentric_lat
     geodetic_lat_last = geodetic_lat + 1
-    sBI_norm = np.linalg.norm(State.sBI__I)
+    sBI_norm = np.linalg.norm(sBI__I)
     iter = 0
 
     # Perform iterations to calculate geodetic latitude
