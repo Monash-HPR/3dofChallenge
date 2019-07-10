@@ -20,7 +20,7 @@ def get_T_DI(sBI__I, time):
                         [-np.cos(lat) * np.cos(lon), -np.cos(lon) * np.sin(lon), -np.sin(lat)]])
 
 def get_T_DG(sBI__I, time):
-    delta = Geodesy.getDeflectionAngle(sBI__I, time) # This wont be the correct delta, Needs addressing
+    delta = np.asscalar(Geodesy.getDeflectionAngle(sBI__I, time)) # This wont be the correct delta, Needs addressing
     return np.array([   [np.cos(delta), 0.0, np.sin(delta)],
                         [0.0, 1.0, 0.0],
                         [-np.sin(delta), 0.0, np.cos(delta)]])
@@ -40,10 +40,13 @@ def get_T_EI(time):
                     [-np.sin(hour_angle), np.cos(hour_angle), 0],
                     [0, 0, 1]])
 
-def get_T_BG(State):
-    theta = State.euler_angles[0]
-    psi = State.euler_angles[1]
-    phi = State.euler_angles[2]
-    return np.array([   [np.cos(phi) * np.cos(theta), np.sin(psi) * np.cos(theta), -np.sin(theta)]
-                        [np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi), np.sin(psi) * np.sin(theta) * np.sin(phi) + np.cos(psi) * np.cos(phi), np.cos(theta) * np.cos(phi)]
+def get_T_BG(euler_angles):
+    # Returns the transformation between body coordinates and geographic coordinates.
+    # NOTE: Needs an error check for gimbal locking
+    theta = np.asscalar(euler_angles[0])
+    psi = np.asscalar(euler_angles[1])
+    phi = np.asscalar(euler_angles[2])
+    print(theta)
+    return np.array([   [np.cos(phi) * np.cos(theta), np.sin(psi) * np.cos(theta), -np.sin(theta)],
+                        [np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi), np.sin(psi) * np.sin(theta) * np.sin(phi) + np.cos(psi) * np.cos(phi), np.cos(theta) * np.cos(phi)],
                         [np.cos(psi) * np.sin(theta) * np.cos(phi) + np.sin(psi) * np.sin(phi), np.sin(psi) * np.sin(theta) * np.cos(phi) - np.cos(psi) * np.sin(phi), np.cos(theta) * np.cos(phi)]])

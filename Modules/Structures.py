@@ -42,6 +42,11 @@ class State:
         T_DI = Transformations.get_T_DI(self.sBI__I, self.time)
         self.vB_I_I = np.matmul(np.transpose(T_DI),vB_E_D) + np.matmul(omegaEI__I,self.sBI__I)
 
+        # Set initial T_BI
+        T_GI = Transformations.get_T_GI(self.sBI__I, self.time)
+        T_BG = Transformations.get_T_BG(self.euler_angles)
+        self.T_BI = np.matmul(T_DI,T_BG)
+
 
 def initialiseState(initial_conditions):
     return State(initial_conditions)
