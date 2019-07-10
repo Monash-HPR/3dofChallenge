@@ -1,5 +1,6 @@
 import numpy as np
 from Modules import Transformations
+from Modules import Geodesy
 
 # constants
 DEG_TO_RAD = np.pi / 180;       # Degrees to radians conversion factor
@@ -17,14 +18,21 @@ class State:
         self.burn_time = initial_conditions["burn_time"]
         self.thrust = initial_conditions["thrust"]
 
-        #set inital position
-        self.sBI__I = np.array([0.0, 0.0, r_Earth + initial_conditions["altitude"]])
-        sBI__G = np.array([[0.0], [0.0], [-r_Earth - initial_conditions["altitude"]]])
-        T_DI = Transformations.get_T_DI(self.sBI__I, self.time)
-        T_DG = Transformations.get_T_DG(self.sBI__I, self.time)
-        print(T_DI)
-        print(T_DG)
-        self.sBI__I = np.matmul(np.matmul(np.transpose(T_DI),T_DG),sBI__G)
+        # Set inital position
+
+            # Set the geodetic postion from the given coordinates by the user. Geodetic altitude is corrected for
+            # an spheroidal Earth and depends on geodetic latitude. NOTE: altitude might be wrong
+            geodetic_position = np.empty( (3,1))
+            geodetic_position[0] = initial_conditions["latitude"]
+            geodetic_position[1] = initial_conditions["longitude"]
+            geodetic_position[2] = initial_conditions["altitude"] + Geodesy.getR0(geodetic_position[0]) - r_Earth
+
+            # Calculate the geocentric position in cartesian coordinates
+            sBI__E = getGeocentricPosition(geodetic_postion)
+
+            # Transform this to the Inertial frame (at inital state they coincide as the Earth has not rotated)
+            T_IE = Transformations.get_T_EI(self.time)
+            self.sBI__I = np.matmul(T_IE,sBI__E)
 
         # Set initial velocity
         self.vB_I_I = np.array([0.0, 0.0, 0.0])
