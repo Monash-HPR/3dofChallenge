@@ -46,7 +46,6 @@ def get_T_BG(euler_angles):
     theta = np.asscalar(euler_angles[0])
     psi = np.asscalar(euler_angles[1])
     phi = np.asscalar(euler_angles[2])
-    print(theta)
     return np.array([   [np.cos(phi) * np.cos(theta), np.sin(psi) * np.cos(theta), -np.sin(theta)],
                         [np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi), np.sin(psi) * np.sin(theta) * np.sin(phi) + np.cos(psi) * np.cos(phi), np.cos(theta) * np.cos(phi)],
                         [np.cos(psi) * np.sin(theta) * np.cos(phi) + np.sin(psi) * np.sin(phi), np.sin(psi) * np.sin(theta) * np.cos(phi) - np.cos(psi) * np.sin(phi), np.cos(theta) * np.cos(phi)]])

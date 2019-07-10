@@ -1,4 +1,5 @@
 import numpy as np
+from Modules import Transformations
 
 # Define global constants:
 # Constants sourced from WGS84.
@@ -62,9 +63,13 @@ def getR0(geodetic_lat):
     # Returns the value R0 which is used in calculating the
     return a * (1 - 0.5 * f * (1 - np.cos(2 * geodetic_lat)) + 5 * f**2 / 16 * (1 - np.cos(4 * geodetic_lat)))
 
-def get_WBE__I():
+def get_WEI__I():
     # Function retrievs the angular velocity vector of the Earth in Inertial coordinates
     return np.array([ [0.0], [0.0], [omega_earth]])
+
+def get_omegaEI__I():
+    wEI__I = get_WEI__I()
+    return Transformations.skewSymmetricExpansion(wEI__I)
 
 def getGeocentricPosition(geodetic_position):
     # Converts spherical geodetic coordinates (spheroidal Earth) to cartesian geocentric (Earth) coordinates

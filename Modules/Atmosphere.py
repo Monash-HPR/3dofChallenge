@@ -6,7 +6,7 @@ def getTemperature(State):
     h = Structures.getAltitude(State)
     if h < 11000:
         return 288.15 - 0.0065*h
-    else
+    else:
         return 216
 
 def getPressure(State):
@@ -15,7 +15,7 @@ def getPressure(State):
     if h < 11000:
         T = getTemperature(State)
         return 101325 * (T/288.15)**5.2559
-    else
+    else:
         return 22630 * np.exp(-0.00015769 * (h - 11000))
 
 def getDensity(State):
@@ -34,7 +34,7 @@ def getSonicSpeed(State):
 
 def getDynamicPressure(State):
     # Returns the dynamic pressure experienced for a given velocity and position
-    V = np.linalg.norm(State.vB_I_I)
+    V = np.linalg.norm(State.vB_E_D)
     density = getDensity(State)
     return 0.5 * density * V**2
 
