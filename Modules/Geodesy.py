@@ -61,3 +61,6 @@ def getGeodeticPosition(sBI__I, time):
 def getR0(geodetic_lat):
     # Returns the value R0 which is used in calculating the
     return a * (1 - 0.5 * f * (1 - np.cos(2 * geodetic_lat)) + 5 * f**2 / 16 * (1 - np.cos(4 * geodetic_lat)))
+
+def get_WBE__I():
+    return np.array([ [0.0], [0.0], [omega_earth]])
