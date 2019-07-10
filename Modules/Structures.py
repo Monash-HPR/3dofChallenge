@@ -31,7 +31,7 @@ class State:
         geodetic_position = np.array([[0.0], [0.0], [0.0]])
         geodetic_position[0,0] = np.radians(initial_conditions["latitude"])
         geodetic_position[1,0] = np.radians(initial_conditions["longitude"])
-        geodetic_position[2,0] = initial_conditions["altitude"] + Geodesy.getR0(geodetic_position[0,0])
+        geodetic_position[2,0] = initial_conditions["altitude"]
 
         # Calculate the geocentric position in cartesian coordinates
         sBI__E = Geodesy.getGeocentricPosition(geodetic_position)
@@ -59,7 +59,7 @@ def getAltitude(State):
     # Returns the altitude
     sBI_norm = np.linalg.norm(State.sBI__I)
     lat = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
-    return np.linalg.norm(sBI_norm - Geodesy.getR0(lat[0]))
+    return sBI_norm - np.linalg.norm(Geodesy.getR0(lat[0]))
 
 def get_aB_I_I(State):
     # Function returns the inertial acceleration in inertial coordinates which can be directly integrated using Newton's

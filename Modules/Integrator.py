@@ -6,10 +6,10 @@ from Modules import Structures
 
 def eulerIntegration(State):
     # Determine the inertial acceleration
-    aB_I_I = Structures.get_aB_I_I(State)
+    State.aB_I_I = Structures.get_aB_I_I(State)
 
     # Integrate for the velocity using Eulers method
-    State.vB_I_I = State.vB_I_I + aB_I_I * State.dt
+    State.vB_I_I = State.vB_I_I + State.aB_I_I * State.dt
 
     # Integrate for position using Eulers method
 

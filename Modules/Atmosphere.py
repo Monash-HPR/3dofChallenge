@@ -40,6 +40,6 @@ def getDynamicPressure(State):
 
 def getMach(State):
     # Returns the Mach Number for a given velocity and altitude
-    V = np.linalg.norm(State.vB_I_I)
+    V = np.linalg.norm(State.vB_E_D)
     a = getSonicSpeed(State)
     return V/a
