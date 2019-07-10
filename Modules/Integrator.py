@@ -11,3 +11,7 @@ def getSpecificForce(State):
     F = Aerodynamics.getAerodynamicForce(State)
     m = State.mass
     return  1/m * np.add(T, F)
+
+def get_a_B_I_I(State):
+    f_specific__B = getSpecificForce(State)
+    

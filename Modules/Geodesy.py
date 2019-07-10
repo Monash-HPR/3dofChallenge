@@ -10,10 +10,10 @@ omega_earth = 7292115e-11        # Angular velocity of the Earth
 C20 = -4.841688e-4               # Second-degree zonal gravitational coefficent
 
 
-def get_g__G(sBI__I):
+def get_g__G(State):
     # Calculates the gravitational vector in geographic coordinates using a spheroidal, rotating Earth model of the state vector
-    sBI_norm = np.linalg.norm(sBI__I)
-    geocentric_lat = getGeocentricLatitude(State)
+    sBI_norm = np.linalg.norm(State.sBI__I)
+    geocentric_lat = getGeocentricLatitude(State.sBI__I)
     return GM / sBI_norm**2 * np.array([   [-3 * np.sqrt(5) * C20 * (a / sBI_norm)**2 * np.sin(geocentric_lat) * np.cos(geocentric_lat)], [0.0], [1 + 1.5 * C20 * (a / sBI_norm)**2 * (3 * np.sin(geocentric_lat) - 1)]])
 
 def getGeocentricLatitude(sBI__I):
@@ -57,7 +57,7 @@ def getGeodeticPosition(sBI__I, time):
     geodetic_lon = np.arcsin(sBI__I[1]/np.sqrt(sBI__I[0]**2 + sBI__I[1]**2)) - omega_earth*time
 
     return np.array([[geodetic_lat], [geodetic_lon], [h]])
-(N + geodetic_alt)
+
 def getR0(geodetic_lat):
     # Returns the value R0 which is used in calculating the
     return a * (1 - 0.5 * f * (1 - np.cos(2 * geodetic_lat)) + 5 * f**2 / 16 * (1 - np.cos(4 * geodetic_lat)))
@@ -66,16 +66,15 @@ def get_WBE__I():
     # Function retrievs the angular velocity vector of the Earth in Inertial coordinates
     return np.array([ [0.0], [0.0], [omega_earth]])
 
-def getGeocentricPosition(geodetic_postion):
+def getGeocentricPosition(geodetic_position):
     # Converts spherical geodetic coordinates (spheroidal Earth) to cartesian geocentric (Earth) coordinates
-    geodetic_lat = geodetic_postion[0]
-    lon = geodetic_postion[1]
-    geodetic_alt = geodetic_postion[2]
+    geodetic_lat = geodetic_position[0,0]
+    lon = geodetic_position[1,0]
+    geodetic_alt = geodetic_position[2,0]
+    print(lon)
     sin_lat = np.sin(geodetic_lat)
     cos_lat = np.cos(geodetic_lat)
     sin_lon = np.sin(lon)
     cos_lon = np.cos(lon)
     N = a**2 / np.sqrt( ( a * cos_lat)**2 + (b * sin_lat)**2)
-    return np.array(    [[(N + geodetic_alt) * cos_lat * cos_lon],
-                        [(N + geodetic_alt) * cos_lat * sin_lon],
-                        [(N * (b/a)**2 + geodetic_alt) * sin_lat])
+    return np.array( [[(N + geodetic_alt) * cos_lat * cos_lon], [(N + geodetic_alt) * cos_lat * sin_lon], [(N * (b/a)**2 + geodetic_alt) * sin_lat]])
