@@ -24,3 +24,18 @@ def get_T_DG(sBI__I, time):
     return np.array([   [np.cos(delta), 0.0, np.sin(delta)],
                         [0.0, 1.0, 0.0],
                         [-np.sin(delta), 0.0, np.cos(delta)]])
+
+def get_T_GI(sBI__I,time):
+    # This function returns the transformation matrix from inertial coordinates to geographic coordinates.
+    # This transformation is time dependent as the celestial longitude and geodetic latitude depend on the rotation of the Earth.
+    T_DI = get_T_DI(sBI__I,time)
+    T_DG = get_T_DG(sBI__I,time)
+    return np.matmul(np.transpose(T_DI),T_DG)
+
+def get_T_EI(time):
+    # This function returns the transformation matrix from geocentric coordinates to the inertial coordinate system
+    wEI = Geodesy.omega_earth
+    hour_angle = wEI * time
+    return  np.array([[np.cos(hour_angle), np.sin(hour_angle), 0],
+                    [-np.sin(hour_angle), np.cos(hour_angle), 0],
+                    [0, 0, 1]])
