@@ -1,8 +1,8 @@
 import numpy as np
 
 def getThrust(State):
+    # Returns the thrust of the motor in body coordinates for a given time.
     if State.time < State.burn_time:
-        return State.thrust
+        return np.array([ [State.thrust], [0.0], [0.0]])
     else
-        return 0.0
-    
+        return np.array([[0.0],[0.0],[0.0]])
