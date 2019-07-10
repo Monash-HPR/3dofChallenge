@@ -13,7 +13,7 @@ C20 = -4.841688e-4               # Second-degree zonal gravitational coefficent
 def get_g__G(State):
     # Calculates the gravitational vector in geographic coordinates using a spheroidal, rotating Earth model of the state vector
     sBI_norm = np.linalg.norm(State.sBI__I)
-    geocentric_lat = getGeocentricLatitude(State.sBI__I)
+    geocentric_lat = np.asscalar(getGeocentricLatitude(State.sBI__I))
     return GM / sBI_norm**2 * np.array([   [-3 * np.sqrt(5) * C20 * (a / sBI_norm)**2 * np.sin(geocentric_lat) * np.cos(geocentric_lat)], [0.0], [1 + 1.5 * C20 * (a / sBI_norm)**2 * (3 * np.sin(geocentric_lat) - 1)]])
 
 def getGeocentricLatitude(sBI__I):

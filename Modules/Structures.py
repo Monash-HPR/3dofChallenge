@@ -17,6 +17,8 @@ class State:
         self.apogee = "false"
         self.burn_time = initial_conditions["burn_time"]
         self.thrust = initial_conditions["thrust"]
+        self.euler_angles = np.array([[0.0], [np.pi/2], [0.0]])
+        self.aB_I_I = np.array([[0.0], [0.0], [0.0]])
 
         # Set inital position
 
@@ -35,11 +37,11 @@ class State:
         self.sBI__I = np.matmul(T_IE,sBI__E)
 
         # Set initial velocity
-        self.vB_I_I = np.array([[0.0], [0.0], [0.0]])
-        self.aB_I_I = np.array([[0.0], [0.0], [0.0]])
-        self.wBI__B = np.array([[0.0], [0.0], [0.0]])
-        self.euler_angles = np.array([[0.0], [0.0], [0.0]])
-        self.T_BI = np.array([[0.0], [0.0], [0.0]])
+        vB_E_D = np.array([[0.0], [0.0], [0.0]])                    # Assumes initial velocity is zero w.r.t. Earth
+        omegaEI__I = Transformations.skewSymmetricExpansion(Geodesy.get_WBE__I())
+        T_DI = Transformations.get_T_DI(self.sBI__I, self.time)
+        self.vB_I_I = np.matmul(np.transpose(T_DI),vB_E_D) + np.matmul(omegaEI__I,self.sBI__I)
+
 
 def initialiseState(initial_conditions):
     return State(initial_conditions)
