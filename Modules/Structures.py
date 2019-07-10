@@ -23,22 +23,23 @@ class State:
         # Set the geodetic postion from the given coordinates by the user. Geodetic altitude is corrected for
         # an spheroidal Earth and depends on geodetic latitude. NOTE: altitude might be wrong
         geodetic_position = np.array([[0.0], [0.0], [0.0]])
-        geodetic_position[0,0] = initial_conditions["latitude"]
-        geodetic_position[1,0] = initial_conditions["longitude"]
+        geodetic_position[0,0] = np.radians(initial_conditions["latitude"])
+        geodetic_position[1,0] = np.radians(initial_conditions["longitude"])
         geodetic_position[2,0] = initial_conditions["altitude"] + Geodesy.getR0(geodetic_position[0]) - r_Earth
 
         # Calculate the geocentric position in cartesian coordinates
         sBI__E = Geodesy.getGeocentricPosition(geodetic_position)
-        print(sBI__E)
 
         # Transform this to the Inertial frame (at inital state they coincide as the Earth has not rotated)
         T_IE = Transformations.get_T_EI(self.time)
-        print(T_IE)
         self.sBI__I = np.matmul(T_IE,sBI__E)
 
         # Set initial velocity
-        self.vB_I_I = np.array([0.0, 0.0, 0.0])
-        self.aB_I_I = np.array([0.0, 0.0, 0.0])
+        self.vB_I_I = np.array([[0.0], [0.0], [0.0]])
+        self.aB_I_I = np.array([[0.0], [0.0], [0.0]])
+        self.wBI__B = np.array([[0.0], [0.0], [0.0]])
+        self.euler_angles = np.array([[0.0], [0.0], [0.0]])
+        self.T_BI = np.array([[0.0], [0.0], [0.0]])
 
 def initialiseState(initial_conditions):
     return State(initial_conditions)
