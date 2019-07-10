@@ -39,3 +39,11 @@ def get_T_EI(time):
     return  np.array([[np.cos(hour_angle), np.sin(hour_angle), 0],
                     [-np.sin(hour_angle), np.cos(hour_angle), 0],
                     [0, 0, 1]])
+
+def get_T_BG(State):
+    theta = State.euler_angles[0]
+    psi = State.euler_angles[1]
+    phi = State.euler_angles[2]
+    return np.array([   [np.cos(phi) * np.cos(theta), np.sin(psi) * np.cos(theta), -np.sin(theta)]
+                        [np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi), np.sin(psi) * np.sin(theta) * np.sin(phi) + np.cos(psi) * np.cos(phi), np.cos(theta) * np.cos(phi)]
+                        [np.cos(psi) * np.sin(theta) * np.cos(phi) + np.sin(psi) * np.sin(phi), np.sin(psi) * np.sin(theta) * np.cos(phi) - np.cos(psi) * np.sin(phi), np.cos(theta) * np.cos(phi)]])

@@ -71,7 +71,6 @@ def getGeocentricPosition(geodetic_position):
     geodetic_lat = geodetic_position[0,0]
     lon = geodetic_position[1,0]
     geodetic_alt = geodetic_position[2,0]
-    print(lon)
     sin_lat = np.sin(geodetic_lat)
     cos_lat = np.cos(geodetic_lat)
     sin_lon = np.sin(lon)
