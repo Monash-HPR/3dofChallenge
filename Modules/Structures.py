@@ -58,7 +58,10 @@ def initialiseState(initial_conditions):
 def getAltitude(State):
     # Returns the altitude
     geodetic_position = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
-    return np.asscalar(geodetic_position[2])
+
+    # Geodesy broken
+    sBI_norm = np.linalg.norm(State.sBI__I)
+    return sBI_norm - Geodesy.a
 
 def get_aB_I_I(State):
     # Function returns the inertial acceleration in inertial coordinates which can be directly integrated using Newton's
