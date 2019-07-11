@@ -70,7 +70,7 @@ def get_aB_I_I(State):
     # Diabled Geodesy graviation model as it is bugged for the time being
     g = Geodesy.GM / (np.linalg.norm(State.sBI__I)**2)
     G = np.array([ [0.0], [0.0], [-g]])
-    return np.matmul(T_IB,1/m * f__B + G)
+    return np.matmul(T_IB,1/m * f__B) + np.matmul(T_IG,G)
 
 def getForces(State):
     # Returns the force (acceleration) due to propulsion and aerodynamics in body coordinates
@@ -78,13 +78,12 @@ def getForces(State):
     # the same. Once wind is implemented, the aerodynamic force will be calculate
     T = Propulsion.getThrust(State)
     F = Aerodynamics.getAerodynamicForce(State)
-    print(np.linalg.norm(F))
     return  T + F 
 
 def get_vB_E_D(State):
     T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
     omegaEI__I = Geodesy.get_omegaEI__I()
-    return np.matmul(T_DI,(State.vB_I_I - np.matmul(omegaEI__I,State.sBI__I)))
+    return np.matmul(T_DI,State.vB_I_I - np.matmul(omegaEI__I,State.sBI__I))
 
 def get_aB_E_D(State):
     T_DI = Transformations.get_T_DI(State.sBI__I,State.time) 

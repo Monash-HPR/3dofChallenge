@@ -47,12 +47,10 @@ while shouldContinueLoop(State,iter):
     # Store output variables
     altitude.append(Structures.getAltitude(State))
     time.append(State.time)
-    velocity.append(np.linalg.norm(State.vB_E_D))
+    velocity.append(np.linalg.norm(State.vB_E_D[0]))
     aB_E_D = Structures.get_aB_E_D(State)
     acceleration.append(np.linalg.norm(State.aB_E_D) * np.sign(aB_E_D[0]))
     iter += 1
-
-
 
 # Post - Processing
 

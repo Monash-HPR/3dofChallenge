@@ -8,6 +8,7 @@ from Modules import Structures
 def eulerIntegration(State):
     # Determine the inertial acceleration
     State.aB_I_I = Structures.get_aB_I_I(State)
+    print(np.linalg.norm(State.aB_I_I))
 
     # Integrate for the velocity using Eulers method
     State.vB_I_I = State.vB_I_I + State.aB_I_I * State.dt
@@ -19,7 +20,7 @@ def eulerIntegration(State):
 
     # Update other state variables
     T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
-    State.vB_E_D = State.vB_E_D + np.matmul(T_DI,State.aB_I_I * State.dt)
+    State.vB_E_D = Structures.get_vB_E_D(State)
     State.aB_E_D = np.matmul(T_DI,State.aB_I_I)
     Structures.updateMass(State)
     State.time += State.dt
