@@ -31,7 +31,7 @@ class State:
         geodetic_position = np.array([[0.0], [0.0], [0.0]])
         geodetic_position[0,0] = np.radians(initial_conditions["latitude"])
         geodetic_position[1,0] = np.radians(initial_conditions["longitude"])
-        geodetic_position[2,0] = initial_conditions["altitude"]
+        geodetic_position[2,0] = initial_conditions["altitude"] + Geodesy.getR0(geodetic_position[0,0])
 
         # Calculate the geocentric position in cartesian coordinates
         sBI__E = Geodesy.getGeocentricPosition(geodetic_position)
@@ -61,7 +61,8 @@ def getAltitude(State):
 
     # Geodesy broken
     sBI_norm = np.linalg.norm(State.sBI__I)
-    return sBI_norm - Geodesy.a
+    lat = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
+    return np.linalg.norm(sBI_norm - Geodesy.getR0(lat[0]))
 
 def get_aB_I_I(State):
     # Function returns the inertial acceleration in inertial coordinates which can be directly integrated using Newton's
@@ -81,7 +82,7 @@ def getForces(State):
     # the same. Once wind is implemented, the aerodynamic force will be calculate
     T = Propulsion.getThrust(State)
     F = Aerodynamics.getAerodynamicForce(State)
-    return  T + F 
+    return  T + F
 
 def get_vB_E_D(State):
     T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
@@ -89,7 +90,7 @@ def get_vB_E_D(State):
     return np.matmul(T_DI,State.vB_I_I - np.matmul(omegaEI__I,State.sBI__I))
 
 def get_aB_E_D(State):
-    T_DI = Transformations.get_T_DI(State.sBI__I,State.time) 
+    T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
     return np.matmul(T_DI,State.aB_I_I)
 
 def updateMass(State):

@@ -1,9 +1,6 @@
 from Modules import Structures
-from Modules.Forces import Inertia
-from Modules import Integrator
-import matplotlib.pyplot as plt
-import numpy as np
-import copy
+from Modules import Geodesy
+import time
 
 # Dictionary below that contains the initial conditions required for simulation
 initial_conditions = {
@@ -15,7 +12,7 @@ initial_conditions = {
     "longitude": 144.9631,      # Range longitude   (degrees)
     "altitude": 0,              # Range altitude    (m)
     "burn_time": 3.5,           # motor burn Time   (s)
-    "thrust": 5800,             # motor burn thrust   (N)
+    "thrust": 5800,             # motor burn Time   (N)
     "reference_area": 0.013893  # reference area (tube cross-section) (m^2)
     }
 
