@@ -57,9 +57,8 @@ def initialiseState(initial_conditions):
 
 def getAltitude(State):
     # Returns the altitude
-    sBI_norm = np.linalg.norm(State.sBI__I)
-    lat = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
-    return sBI_norm - np.linalg.norm(Geodesy.getR0(lat[0]))
+    geodetic_position = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
+    return np.asscalar(geodetic_position[2])
 
 def get_aB_I_I(State):
     # Function returns the inertial acceleration in inertial coordinates which can be directly integrated using Newton's
@@ -68,7 +67,10 @@ def get_aB_I_I(State):
     T_IB = np.transpose(State.T_BI)
     m = State.mass
     T_IG = np.transpose(Transformations.get_T_GI(State.sBI__I,State.burn_time))
-    return 1/m * np.matmul(T_IB,f__B) + np.matmul(T_IG,g__G)
+    # Diabled Geodesy graviation model as it is bugged for the time being
+    g = Geodesy.GM / (np.linalg.norm(State.sBI__I)**2)
+    G = np.array([ [0.0], [0.0], [-g]])
+    return np.matmul(T_IB,1/m * f__B + G)
 
 def getForces(State):
     # Returns the force (acceleration) due to propulsion and aerodynamics in body coordinates
@@ -76,9 +78,20 @@ def getForces(State):
     # the same. Once wind is implemented, the aerodynamic force will be calculate
     T = Propulsion.getThrust(State)
     F = Aerodynamics.getAerodynamicForce(State)
-    return  T + F
+    print(np.linalg.norm(F))
+    return  T + F 
 
 def get_vB_E_D(State):
     T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
     omegaEI__I = Geodesy.get_omegaEI__I()
     return np.matmul(T_DI,(State.vB_I_I - np.matmul(omegaEI__I,State.sBI__I)))
+
+def get_aB_E_D(State):
+    T_DI = Transformations.get_T_DI(State.sBI__I,State.time) 
+    return np.matmul(T_DI,State.aB_I_I)
+
+def updateMass(State):
+    if State.time < State.burn_time:
+        State.mass = State.mass - State.mass_propellant / State.burn_time * State.dt
+        return
+    return

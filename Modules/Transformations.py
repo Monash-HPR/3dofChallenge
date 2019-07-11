@@ -1,7 +1,6 @@
 import numpy as np
 from Modules import Geodesy
 
-
 def skewSymmetricExpansion(vector):
     # Takes a vector and returns the Skew-Symmetric matrix expansion
     x1 = np.asscalar(vector[0])
@@ -12,15 +11,15 @@ def skewSymmetricExpansion(vector):
 def get_T_DI(sBI__I, time):
     # Create the transformation matrix from geodetic coordinates to inertial coordinates
     geodetic_position = Geodesy.getGeodeticPosition(sBI__I, time)
-    lat = np.asscalar(geodetic_position[0])     # Geodetic latitude
-    lon = np.asscalar(geodetic_position[1])     # Geodetic longitude
-
+    lat = np.asscalar(np.asscalar(geodetic_position[0]))     # Geodetic latitude
+    lon = np.asscalar(np.asscalar(geodetic_position[1]))    # Geodetic longitude
+    
     return np.array([   [-np.sin(lat) * np.cos(lon), -np.sin(lat) * np.sin(lon), np.cos(lon)],
                         [-np.sin(lon), np.cos(lon), 0.0],
                         [-np.cos(lat) * np.cos(lon), -np.cos(lon) * np.sin(lon), -np.sin(lat)]])
 
 def get_T_DG(sBI__I, time):
-    delta = np.asscalar(Geodesy.getDeflectionAngle(sBI__I, time)) # This wont be the correct delta, Needs addressing
+    delta = np.asscalar(np.asscalar(Geodesy.getDeflectionAngle(sBI__I, time))) # This wont be the correct delta, Needs addressing
     return np.array([   [np.cos(delta), 0.0, np.sin(delta)],
                         [0.0, 1.0, 0.0],
                         [-np.sin(delta), 0.0, np.cos(delta)]])
@@ -41,7 +40,7 @@ def get_T_EI(time):
                     [0, 0, 1]])
 
 def get_T_BG(euler_angles):
-    # Returns the transformation between body coordinates and geographic coordinates.
+    # Returns the transformation between body coordinates and Earth coordinates.
     # NOTE: Needs an error check for gimbal locking
     theta = np.asscalar(euler_angles[0])
     psi = np.asscalar(euler_angles[1])
@@ -49,3 +48,4 @@ def get_T_BG(euler_angles):
     return np.array([   [np.cos(phi) * np.cos(theta), np.sin(psi) * np.cos(theta), -np.sin(theta)],
                         [np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi), np.sin(psi) * np.sin(theta) * np.sin(phi) + np.cos(psi) * np.cos(phi), np.cos(theta) * np.cos(phi)],
                         [np.cos(psi) * np.sin(theta) * np.cos(phi) + np.sin(psi) * np.sin(phi), np.sin(psi) * np.sin(theta) * np.cos(phi) - np.cos(psi) * np.sin(phi), np.cos(theta) * np.cos(phi)]])
+

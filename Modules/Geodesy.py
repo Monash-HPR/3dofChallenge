@@ -10,7 +10,6 @@ GM = 3986004.418e8               # Earth's gravitational constant (m**3/s**2)
 omega_earth = 7292115e-11        # Angular velocity of the Earth
 C20 = -4.841688e-4               # Second-degree zonal gravitational coefficent
 
-
 def get_g__G(State):
     # Calculates the gravitational vector in geographic coordinates using a spheroidal, rotating Earth model of the state vector
     sBI_norm = np.linalg.norm(State.sBI__I)
@@ -48,7 +47,7 @@ def getGeodeticPosition(sBI__I, time):
     while (np.abs(geodetic_lat_last - geodetic_lat) > 1e-6) and (iter < 15):
         geodetic_lat_last = geodetic_lat
         R0 = getR0(geodetic_lat)
-        h = sBI_norm - R0
+        h = np.linalg.norm(sBI_norm - R0)
         delta = getApproximateDeflectionAngle(geodetic_lat, h)
         geodetic_lat = delta + geocentric_lat
         iter += 1
