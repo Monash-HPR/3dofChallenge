@@ -58,7 +58,7 @@ class Simulator:
             _state.update(
                 mass=self.motor.get_mass(_state.time),
                 drag=self.drag.get_force(_state.vel, _state.pos),
-                gravity=self.gravity.get_acceleration(_state.pos[1])*self.motor.get_mass(_state.time)
+                gravity=self.gravity.get_aB_E_G(_state.pos)*self.motor.get_mass(_state.time)
             )
             self.state.update_from(_state)
             self.iters += 1
@@ -98,7 +98,7 @@ class Simulator:
         plt.tight_layout()
         plt.show()
 
-    def get_accel(self, time, vel, pos):
+    def get_accel(self, time, vB_E_I, sB_E_I):
         """
         Get the acceleration w.r.t inertial frame
 
@@ -110,39 +110,41 @@ class Simulator:
         """
         mass = self.mass + self.motor.get_mass(time)
 
+        sB_E_G = Transformations.T_GI(time, self.lat, self.lon) @ sB_E_I
+
         # Calculate specific force w.r.t. body
-        contact_force = self.motor.get_thrust(time) + self.drag.get_force(vel, pos)
-        specific_force = contact_force/mass
+        contact_force = self.motor.get_thrust(time) + self.drag.get_force(vB_E_I, sB_E_I)
+        sfB_E_B = contact_force/mass
 
         # NOTE: Hardcoding [yaw,pitch,roll] as [0,0,0] as this is a 3DOF sim
         [yaw, pitch, roll] = [0.0, 0.0, 0.0]
         # Change the specific force to geocentric
-        specific_force_G = Transformations.T_GB(yaw, pitch, roll) @ specific_force
+        sfB_E_G = Transformations.T_GB(yaw, pitch, roll) @ sfB_E_B
         # Calculate the net acceleration w.r.t. geocentric
-        accel_G = specific_force_G + self.gravity.get_acceleration(pos[1])
+        aB_E_G = sfB_E_G + self.gravity.get_aB_E_G(sB_E_G)
 
         # Check if the body is still on the launch rail
-        if (Transformations.T_GI(time, self.lat, self.lon) @ pos)[1] <= self.launch_rail_length and not self.reached_apogee:
+        if sB_E_G[1] <= self.launch_rail_length and not self.reached_apogee:
             # Calculate the net specific force acting perpendicular to the launch rail
-            spec_force_rail = np.array([accel_G[0], 0.0, accel_G[2]])
+            spec_force_rail = np.array([aB_E_G[0], 0.0, aB_E_G[2]])
             spec_force_rail_mag = np.linalg.norm(spec_force_rail)
 
             # Calculate the friction against the launch rail
             # Modified friction formula for specific force rather than total force
-            spec_force_rail_friction = -np.sign(vel[1]) * spec_force_rail_mag * self.launch_rail_mu
+            spec_force_rail_friction = -np.sign(vB_E_I[1]) * spec_force_rail_mag * self.launch_rail_mu
     
             # Add the friction to the net acceleration, whilst ensuring the acceleration doesn't go negative
             # NOTE: Possible bug here, if motor burns out before off the launch rail then the body will `hover`
-            #accel_G[1] = np.max([accel_G[1] + spec_force_rail_friction, 0.0])
-            accel_G[1] = accel_G[1] + spec_force_rail_friction
+            #aB_E_G[1] = np.max([aB_E_G[1] + spec_force_rail_friction, 0.0])
+            aB_E_G[1] = aB_E_G[1] + spec_force_rail_friction
 
             # Prevent acceleration in the 1^G and 3^G axes
-            accel_G[0] = 0.0
-            accel_G[2] = 0.0
+            aB_E_G[0] = 0.0
+            aB_E_G[2] = 0.0
 
         # Change the net acceleration to inertial coordinates
-        accel_I = Transformations.T_IG(time, self.lat, self.lon) @ accel_G
-        return accel_G
+        aB_E_I = Transformations.T_IG(time, self.lat, self.lon) @ aB_E_G
+        return aB_E_I
 
 if __name__ == "__main__":
     logger.info('Starting 3DOF Simulator')
