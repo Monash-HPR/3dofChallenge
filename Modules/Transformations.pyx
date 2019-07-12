@@ -78,5 +78,5 @@ cpdef np.ndarray T_IG(double time, double lat, double lon):
     return T_IE_time(time) @ T_EG(lat, lon)
 
 # Transformation matrix of geocentric w.r.t. inertial
-cpdef np.ndarray T_GIo(double time, double lat, double lon):
+cpdef np.ndarray T_GI(double time, double lat, double lon):
     return T_GE(lat, lon) @ T_EI_time(time)
