@@ -46,10 +46,10 @@ class Simulator:
         [self.lat, self.lon] = -37.8136, 144.9631 # Initialise location
 
     def initialise(self):
-        logger.info('Initialising Simulator')
+        logger.info('Initialising Simulation')
 
     def run(self):
-        logger.info('Running Simulator')
+        logger.info('Running Simulation')
         states = [self.state.copy()]
 
         while not self.reached_end:
@@ -69,7 +69,7 @@ class Simulator:
             if self.iters > self.max_iters or self.state.pos[1] <= 0:
                 self.reached_end = True
 
-        logger.info('Finished Simulator')
+        logger.info('Finished Simulation')
         [time, pos, vel, acc, drag, grav] = np.array([[s.time, s.pos[1], s.vel[1], s.acc[1], s.drag[1], s.gravity[1]] for s in states]).T
         print(f'Max Alt: {np.max(pos):.3f} m')
         print(f'Max Vel: {np.max(vel):.3f} m/s')
@@ -90,11 +90,6 @@ class Simulator:
         plt.xlabel('Time [s]')
         plt.ylabel('Acceleration [m/s^2]')
 
-        """plt.subplot(2, 2, 4)
-        plt.xlabel('Time [s]')
-        plt.ylabel('Position (Inertial) [m]')
-        plt.legend(['0^I', '2^I'])"""
-
         plt.tight_layout()
         plt.show()
 
@@ -110,10 +105,10 @@ class Simulator:
         """
         mass = self.mass + self.motor.get_mass(time)
 
-        sB_E_G = Transformations.T_GI(time, self.lat, self.lon) @ sB_E_I
+        sBE__G = Transformations.T_GI(time, self.lat, self.lon) @ sBE__I
 
         # Calculate specific force w.r.t. body
-        contact_force = self.motor.get_thrust(time) + self.drag.get_force(vB_E_I, sB_E_I)
+        contact_force = self.motor.get_thrust(time) + self.drag.get_force(vB_E_I, sBE__G)
         sfB_E_B = contact_force/mass
 
         # NOTE: Hardcoding [yaw,pitch,roll] as [0,0,0] as this is a 3DOF sim
@@ -121,10 +116,10 @@ class Simulator:
         # Change the specific force to geocentric
         sfB_E_G = Transformations.T_GB(yaw, pitch, roll) @ sfB_E_B
         # Calculate the net acceleration w.r.t. geocentric
-        aB_E_G = sfB_E_G + self.gravity.get_aB_E_G(sB_E_G)
+        aB_E_G = sfB_E_G + self.gravity.get_aB_E_G(sBE__G)
 
         # Check if the body is still on the launch rail
-        if sB_E_G[1] <= self.launch_rail_length and not self.reached_apogee:
+        if sBE__G[1] <= self.launch_rail_length and not self.reached_apogee:
             # Calculate the net specific force acting perpendicular to the launch rail
             spec_force_rail = np.array([aB_E_G[0], 0.0, aB_E_G[2]])
             spec_force_rail_mag = np.linalg.norm(spec_force_rail)
