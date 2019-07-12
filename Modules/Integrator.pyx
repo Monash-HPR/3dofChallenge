@@ -16,7 +16,7 @@ class Integrator:
         :param state: The current state to use
         :type state: Modules.State.State
         :param accel_func: Function to return the acceleration of the body w.r.t. the inertial frame
-        :type accel_func: Callable with 3 arguments (time, vel, alt)
+        :type accel_func: Callable with 3 arguments (time, vB_E_I, sBE__I)
 
         """
         # Number of estimates the method uses
@@ -34,28 +34,28 @@ class Integrator:
         c = np.array([0.0, 0.0, 0.5, 0.5, 1.0], dtype=np.float64)
 
          # Number of estimates + 1 (0-indexed arrays)
-        k_vel = np.zeros((length + 1, 3)) # vels
-        k_acc = np.zeros((length + 1, 3)) # acc
+        vB_E_I_k = np.zeros((length + 1, 3)) # vels
+        aB_E_I_k = np.zeros((length + 1, 3)) # acc
 
         # Calculate the estimates
         for i in range(1,length+1):
-            _time = state.time + c[i]*self.h
-            _pos = state.pos + self.h*np.sum(np.multiply(k_vel.T, a[i]).T)
-            k_vel[i] = state.vel + self.h*np.sum(np.multiply(k_acc.T, a[i]).T)
-            k_acc[i] = accel_func(_time, k_vel[i], _pos)
+            time_est = state.time + c[i]*self.h
+            sBE__I_est = state.pos + self.h*np.sum(np.multiply(vB_E_I_k.T, a[i]).T)
+            vB_E_I_k[i] = state.vel + self.h*np.sum(np.multiply(aB_E_I_k.T, a[i]).T)
+            aB_E_I_k[i] = accel_func(time_est, vB_E_I_k[i], sBE__I_est)
 
         # Reduce the estimates to a single set of values
         t_final = state.time + self.h
-        delta_pos = self.h*np.sum(np.multiply(k_vel.T, b).T, 0)
-        pos_final = state.pos + delta_pos
-        delta_v = self.h*np.sum(np.multiply(k_acc.T, b).T, 0)
-        vel_final = state.vel + delta_v
-        acc_final = np.divide(delta_v, self.h)
+        delta_pos = self.h*np.sum(np.multiply(vB_E_I_k.T, b).T, 0)
+        sBE__I_est = state.pos + delta_pos
+        delta_v = self.h*np.sum(np.multiply(aB_E_I_k.T, b).T, 0)
+        vB_E_I_est = state.vel + delta_v
+        aB_E_I_est = np.divide(delta_v, self.h)
         return state.update(
             time=t_final,
-            pos=pos_final,
-            vel=vel_final,
-            acc=acc_final
+            pos=sBE__I_est,
+            vel=vB_E_I_est,
+            acc=aB_E_I_est
         )
 
 logger.debug('Integrator Module Loaded')
