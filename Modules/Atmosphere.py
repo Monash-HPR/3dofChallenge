@@ -34,7 +34,7 @@ def getSonicSpeed(State):
 
 def getDynamicPressure(State):
     # Returns the dynamic pressure experienced for a given velocity and position
-    V = np.linalg.norm(State.vB_E_D[0])
+    V = np.linalg.norm(State.vB_E_D)
     density = getDensity(State)
     return 0.5 * density * V**2
 

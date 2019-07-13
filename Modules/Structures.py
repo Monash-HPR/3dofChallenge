@@ -22,59 +22,38 @@ class State:
         self.thrust = initial_conditions["thrust"]
         self.reference_area = initial_conditions["reference_area"]
         self.euler_angles = np.array([[0.0], [np.pi/2], [0.0]])
-        self.aB_I_I = np.array([[0.0], [0.0], [0.0]])
+        self.lat = initial_conditions["latitude"]
+        self.lon = initial_conditions["longitude"]
+
 
         # Set inital position
-
-        # Set the geodetic postion from the given coordinates by the user. Geodetic altitude is corrected for
-        # an spheroidal Earth and depends on geodetic latitude. NOTE: altitude might be wrong
-        geodetic_position = np.array([[0.0], [0.0], [0.0]])
-        geodetic_position[0,0] = np.radians(initial_conditions["latitude"])
-        geodetic_position[1,0] = np.radians(initial_conditions["longitude"])
-        geodetic_position[2,0] = initial_conditions["altitude"] + Geodesy.getR0(geodetic_position[0,0])
-
         # Calculate the geocentric position in cartesian coordinates
-        sBI__E = Geodesy.getGeocentricPosition(geodetic_position)
-
-        # Transform this to the Inertial frame (at inital state they coincide as the Earth has not rotated)
-        T_IE = Transformations.get_T_EI(self.time)
-        self.sBI__I = np.matmul(T_IE,sBI__E)
+        self.sBE__G = initGeographicPosition(initial_conditions)
+        #T_GI = Transformations.get_T_GI(self.lat,self.lon)
+        self.sBI__I = self.sBE__G
 
         # Set initial velocity
-        self.vB_E_D = np.array([[0.0], [0.0], [0.0]])                    # Assumes initial velocity is zero w.r.t. Earth
-        omegaEI__I = Geodesy.get_omegaEI__I()
-        T_DI = Transformations.get_T_DI(self.sBI__I, self.time)
-        self.vB_I_I = np.matmul(np.transpose(T_DI),self.vB_E_D) + np.matmul(omegaEI__I,self.sBI__I)
+        self.vB_E_G = np.array([[0.0], [0.0], [0.0]])          # Assumes initial velocity is zero w.r.t. Earth
+        self.vB_I_I = self.vB_E_G
 
-        # Set initial T_BI
-        T_GI = Transformations.get_T_GI(self.sBI__I, self.time)
-        T_BG = Transformations.get_T_BG(self.euler_angles)
-        self.T_BI = np.matmul(T_DI,T_BG)
-
+        #Set initial Acceleration
+        self.aB_I_I = np.array([[0.0], [0.0], [0.0]])
+        self.aB_E_G = np.array([[0.0], [0.0], [0.0]])
 
 def initialiseState(initial_conditions):
     return State(initial_conditions)
 
 def getAltitude(State):
     # Returns the altitude
-    geodetic_position = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
-
-    # Geodesy broken
     sBI_norm = np.linalg.norm(State.sBI__I)
-    lat = Geodesy.getGeodeticPosition(State.sBI__I,State.time)
-    return np.linalg.norm(sBI_norm - Geodesy.getR0(lat[0]))
+    return sBI_norm - r_Earth
 
 def get_aB_I_I(State):
     # Function returns the inertial acceleration in inertial coordinates which can be directly integrated using Newton's
     f__B = getForces(State)
-    g__G = Inertia.getGravityAcceleration(State)
-    T_IB = np.transpose(State.T_BI)
+    g__G = np.array([[Geodesy.GM / (np.linalg.norm(State.sBI__I)**2)], [0.0], [0.0]])
     m = State.mass
-    T_IG = np.transpose(Transformations.get_T_GI(State.sBI__I,State.burn_time))
-    # Diabled Geodesy graviation model as it is bugged for the time being
-    g = Geodesy.GM / (np.linalg.norm(State.sBI__I)**2)
-    G = np.array([ [0.0], [0.0], [-g]])
-    return np.matmul(T_IB,1/m * f__B) + np.matmul(T_IG,G)
+    return  1/m * f__B - g__G
 
 def getForces(State):
     # Returns the force (acceleration) due to propulsion and aerodynamics in body coordinates
@@ -84,17 +63,23 @@ def getForces(State):
     F = Aerodynamics.getAerodynamicForce(State)
     return  T + F
 
-def get_vB_E_D(State):
-    T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
-    omegaEI__I = Geodesy.get_omegaEI__I()
-    return np.matmul(T_DI,State.vB_I_I - np.matmul(omegaEI__I,State.sBI__I))
-
-def get_aB_E_D(State):
-    T_DI = Transformations.get_T_DI(State.sBI__I,State.time)
-    return np.matmul(T_DI,State.aB_I_I)
-
 def updateMass(State):
     if State.time < State.burn_time:
         State.mass = State.mass - State.mass_propellant / State.burn_time * State.dt
         return
     return
+
+def initGeographicPosition(initial_conditions):
+    lat = np.radians(initial_conditions["latitude"])
+    lon = np.radians(initial_conditions["longitude"])
+    alt = initial_conditions["altitude"]
+    sin_lat = np.sin(lat)
+    cos_lat = np.cos(lon)
+    sin_lon = np.sin(lon)
+    cos_lon = np.cos(lon)
+    r = (alt + r_Earth)
+    x = r * cos_lon
+    y = r * sin_lon
+    z = r * sin_lat
+    print(np.array( [[x], [y], [z]]))
+    return np.array( [[x], [y], [z]])

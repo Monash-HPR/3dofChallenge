@@ -1,5 +1,8 @@
 from Modules import Structures
 from Modules import Geodesy
+from Modules import Integrator
+import matplotlib.pyplot as plt
+import numpy as np
 import time
 
 # Dictionary below that contains the initial conditions required for simulation
@@ -8,8 +11,8 @@ initial_conditions = {
     "dt_initial": 0.1,          # Initial time step size
     "mass_dry": 25,             # Mass of the rocket without propellant
     "mass_propellant": 9,       # Mass of propellant
-    "latitude": -37.8136,       # Range latitude    (degrees)
-    "longitude": 144.9631,      # Range longitude   (degrees)
+    "latitude": 0,       # Range latitude    (degrees)
+    "longitude": 0,      # Range longitude   (degrees)
     "altitude": 0,              # Range altitude    (m)
     "burn_time": 3.5,           # motor burn Time   (s)
     "thrust": 5800,             # motor burn Time   (N)
@@ -20,47 +23,39 @@ initial_conditions = {
 State = Structures.initialiseState(initial_conditions)
 altitude = [Structures.getAltitude(State)]
 time = [State.time]
-velocity = [np.linalg.norm(State.vB_E_D)]
-acceleration = [0]
+velocity = [np.linalg.norm(State.vB_E_G)]
+acceleration = [np.linalg.norm(Structures.get_aB_I_I(State))]
 
-State_history = [State]
-iter = 0
-
-def shouldContinueLoop(State,iter):
-    # Function which breaks the main loop at apogee
-    if iter == 0:
+def shouldContinueLoop():
+    if  State.time < 60 and State.vB_E_G[0] >= 0:
         return True
-    elif altitude[iter] < altitude[iter - 1]:
+    else:
         return False
-    elif State.time < 100:
-        return True
-    return
+
 
 # Main Loop
-while shouldContinueLoop(State,iter):
+while shouldContinueLoop():
+    # Integrate the DE's in inertial coordinates
     Integrator.eulerIntegration(State)
-    State_history.append(copy.deepcopy(State))
 
-    # Store output variables
-    altitude.append(Structures.getAltitude(State))
+    altitude.append(np.linalg.norm(State.sB_E_G) - 6378137.0)
     time.append(State.time)
-    velocity.append(np.linalg.norm(State.vB_E_D[0]))
-    aB_E_D = Structures.get_aB_E_D(State)
-    acceleration.append(np.linalg.norm(State.aB_E_D) * np.sign(aB_E_D[0]))
-    iter += 1
+    velocity.append(State.vB_E_G[0])
+    acceleration.append(State.aB_E_G[0])
+    iter =+ 1
+
 
 # Post - Processing
-
 # Plotting
-plt.figure()
+plt.subplot(131)
 plt.plot(time, altitude)
 plt.xlabel('Time (s)')
 plt.ylabel('Altitude (m)')
-plt.figure()
+plt.subplot(132)
 plt.plot(time, velocity)
 plt.xlabel('Time (s)')
-plt.ylabel('Vertical Velocity (m/s)')
-plt.figure()
+plt.ylabel('Velocity (m/s)')
+plt.subplot(133)
 plt.plot(time, acceleration)
 plt.xlabel('Time (s)')
 plt.ylabel('Acceleration (m/s^2)')
