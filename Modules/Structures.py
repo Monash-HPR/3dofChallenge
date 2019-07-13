@@ -24,6 +24,7 @@ class State:
         self.euler_angles = np.array([[0.0], [np.pi/2], [0.0]])
         self.lat = initial_conditions["latitude"]
         self.lon = initial_conditions["longitude"]
+        self.max_altitude = 0.0;
 
 
         # Set inital position
@@ -77,9 +78,8 @@ def initGeographicPosition(initial_conditions):
     cos_lat = np.cos(lon)
     sin_lon = np.sin(lon)
     cos_lon = np.cos(lon)
-    r = (alt + r_Earth)
+    r = (alt + r_Earth) * cos_lat
     x = r * cos_lon
     y = r * sin_lon
-    z = r * sin_lat
-    print(np.array( [[x], [y], [z]]))
+    z = (alt + r_Earth) * sin_lat
     return np.array( [[x], [y], [z]])

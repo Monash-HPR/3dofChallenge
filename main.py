@@ -30,6 +30,7 @@ def shouldContinueLoop():
     if  State.time < 60 and State.vB_E_G[0] >= 0:
         return True
     else:
+        State.max_altitude = np.linalg.norm(State.sB_E_G) - Geodesy.a
         return False
 
 
@@ -38,7 +39,7 @@ while shouldContinueLoop():
     # Integrate the DE's in inertial coordinates
     Integrator.eulerIntegration(State)
 
-    altitude.append(np.linalg.norm(State.sB_E_G) - 6378137.0)
+    altitude.append(np.linalg.norm(State.sB_E_G) - Geodesy.a)
     time.append(State.time)
     velocity.append(State.vB_E_G[0])
     acceleration.append(State.aB_E_G[0])
@@ -46,6 +47,7 @@ while shouldContinueLoop():
 
 
 # Post - Processing
+print("Max Altitude: ",State.max_altitude,"m")
 # Plotting
 plt.subplot(131)
 plt.plot(time, altitude)

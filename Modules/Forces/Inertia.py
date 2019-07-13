@@ -9,4 +9,4 @@ def getGravityAcceleration(State):
     # Calculate centrifugal force due to Earth's Rotation
     omegaEI__I = Geodesy.get_omegaEI__I()
     f = np.matmul(np.matmul(omegaEI__I,omegaEI__I),State.sBI__I)
-    return g-f
+    return g
