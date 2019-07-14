@@ -30,7 +30,7 @@ def shouldContinueLoop():
     if  State.time < 60 and State.vB_E_G[0] >= 0:
         return True
     else:
-        State.max_altitude = np.linalg.norm(State.sB_E_G) - Geodesy.a
+        State.max_altitude = np.round((np.linalg.norm(State.sB_E_G) - Geodesy.a) * 3.28084)
         return False
 
 
@@ -47,7 +47,7 @@ while shouldContinueLoop():
 
 
 # Post - Processing
-print("Max Altitude: ",State.max_altitude,"m")
+print("Max Altitude: ",State.max_altitude,"ft")
 # Plotting
 plt.subplot(131)
 plt.plot(time, altitude)
