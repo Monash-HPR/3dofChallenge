@@ -17,7 +17,6 @@ class State:
         self.mass_dry = initial_conditions["mass_dry"]
         self.mass_propellant = initial_conditions["mass_propellant"]
         self.mass = self.mass_propellant + self.mass_dry
-        self.apogee = "false"
         self.burn_time = initial_conditions["burn_time"]
         self.thrust = initial_conditions["thrust"]
         self.reference_area = initial_conditions["reference_area"]
@@ -25,6 +24,11 @@ class State:
         self.lat = initial_conditions["latitude"]
         self.lon = initial_conditions["longitude"]
         self.max_altitude = 0.0;
+        self.parachute_cD = initial_conditions["parachute_Cd"]
+        self.parachute_area = initial_conditions["parachute_area"]
+        self.drogue_cD = initial_conditions["drogue_cD"]
+        self.drogue_area = initial_conditions["drogue_area"]
+        self.main_deploy = initial_conditions["main_deploy"]
 
 
         # Set inital position

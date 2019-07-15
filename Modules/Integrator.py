@@ -19,7 +19,7 @@ def eulerIntegration(State):
     #print(State.vB_I_I,State.sBI__I)
 
     # Update other state variables
-    T_GI = Transformations.get_T_GI(State.lat,State.lon)
+    # T_GI = Transformations.get_T_GI(State.lat,State.lon) #Not currently used
     State.aB_E_G = State.aB_I_I
     State.vB_E_G = State.vB_E_G + State.aB_E_G * State.dt
     State.sB_E_G = Geodesy.getGeocentricPosition(State)

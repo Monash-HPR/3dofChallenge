@@ -16,7 +16,12 @@ initial_conditions = {
     "altitude": 0,              # Range altitude    (m)
     "burn_time": 3.5,           # motor burn Time   (s)
     "thrust": 5800,             # motor burn Time   (N)
-    "reference_area": 0.013893  # reference area (tube cross-section) (m^2)
+    "reference_area": 0.013893, # reference area (tube cross-section) (m^2)
+    "parachute_Cd": 2,          # Parachute drag coefficient
+    "parachute_area": 4.154,    # Parachute area (m^2)
+    "drogue_cD": 1,             # Drogue parachute drag coefficent
+    "drogue_area": 0.5,         # Drogue parachute area (m^2)
+    "main_deploy": 11000        # Main deployment altitude (ft)
     }
 
 # Initialise the state class with initial conditions
@@ -27,11 +32,11 @@ velocity = [np.linalg.norm(State.vB_E_G)]
 acceleration = [np.linalg.norm(Structures.get_aB_I_I(State))]
 
 def shouldContinueLoop():
-    if  State.time < 60 and State.vB_E_G[0] >= 0:
+    if State.time < 700 and State.vB_E_G[0] >= 0:
         return True
     else:
-        State.max_altitude = np.round((np.linalg.norm(State.sB_E_G) - Geodesy.a) * 3.28084)
-        return False
+        State.max_altitude = np.round(Structures.getAltitude(State) * 3.28084)
+        return State.time < 700
 
 
 # Main Loop
@@ -39,7 +44,7 @@ while shouldContinueLoop():
     # Integrate the DE's in inertial coordinates
     Integrator.eulerIntegration(State)
 
-    altitude.append(np.linalg.norm(State.sB_E_G) - Geodesy.a)
+    altitude.append(Structures.getAltitude(State))
     time.append(State.time)
     velocity.append(State.vB_E_G[0])
     acceleration.append(State.aB_E_G[0])
