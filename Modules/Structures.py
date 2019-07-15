@@ -55,10 +55,16 @@ def getAltitude(State):
 
 def get_aB_I_I(State):
     # Function returns the inertial acceleration in inertial coordinates which can be directly integrated using Newton's
-    f__B = getForces(State)
-    g__G = np.array([[Geodesy.GM / (np.linalg.norm(State.sBI__I)**2)], [0.0], [0.0]])
-    m = State.mass
-    return  1/m * f__B - g__G
+    # NOTE: Added in ground hit results in zero acceleration and sets speed to zero. Might not be the best place to put it.
+    if getAltitude(State) <0:
+        State.vB_E_G = np.array([ [0.0], [0.0], [0.0]])
+        State.vB_I_I = np.array([ [0.0], [0.0], [0.0]])
+        return np.array([ [0.0], [0.0], [0.0]])
+    else:
+        f__B = getForces(State)
+        g__G = np.array([[Geodesy.GM / (np.linalg.norm(State.sBI__I)**2)], [0.0], [0.0]])
+        m = State.mass
+        return  1/m * f__B - g__G
 
 def getForces(State):
     # Returns the force (acceleration) due to propulsion and aerodynamics in body coordinates
