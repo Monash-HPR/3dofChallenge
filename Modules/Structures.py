@@ -23,6 +23,7 @@ class State:
         self.euler_angles = np.array([[0.0], [np.pi/2], [0.0]])
         self.lat = initial_conditions["latitude"]
         self.lon = initial_conditions["longitude"]
+        self.apogee = False
         self.max_altitude = 0.0;
         self.parachute_cD = initial_conditions["parachute_Cd"]
         self.parachute_area = initial_conditions["parachute_area"]

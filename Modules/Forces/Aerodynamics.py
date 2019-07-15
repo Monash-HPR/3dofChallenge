@@ -19,7 +19,7 @@ def getAerodynamicForce(State):
         q = Atmosphere.getDynamicPressure(State)
         return q * s * np.array([ [-cD], [0.0], [0.0]])
 
-    elif Structures.getAltitude(State) > State.main_deploy / 3.28084:
+    elif Structures.getAltitude(State) > State.main_deploy / 3.148 :
         cD = State.drogue_cD
         s = State.drogue_area
         q = Atmosphere.getDynamicPressure(State)
